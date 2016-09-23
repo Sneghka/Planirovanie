@@ -38,6 +38,7 @@ namespace Planirovanie
         public const string SearchPeriodAuditWebXPath = ".//*[@class='QvFrame Document_LB04']/div[2]/div[1]/div";
         public const string InputFieldAuditXPath = "html/body/div[2]/input";
         public const string GrXPath = ".//*[@class='inputShadow']";
+        public const string GrSliderXPath = ".//*[@id='sliderGP']";
 
         public const string Gr1340XPath =
             ".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div";
@@ -48,7 +49,7 @@ namespace Planirovanie
         public const string LockAuditWebXPath = ".//*[@id='QvAjaxToolbar']/ul[2]/li[13]/a";
         public const string SearchPreperationIdAuditWebXPath = ".//*[@class='QvFrame Document_LB03']/div[2]/div[1]/div";
         public const string SavePlanButtonXPath = ".//*[@id='save_plan_customer']";
-        public const string AcceptButtonXpath = "html/body/div[5]/div[3]/div/button[2]";
+        public const string AcceptButtonXpath = ".//*[@aria-labelledby='ui-dialog-title-dialog-plan-settings']/div[3]/div/button[2]";
         public const string GluePopupGoToconfirmationXPath = "/html/body/div[@class='ui-pnotify']/div/div[3]";
 
         public const string PopupGoToconfirmationButtonXPath =
@@ -297,6 +298,11 @@ namespace Planirovanie
             get { return _firefox.FindElement(By.XPath(".//*[@class='inputShadow']")); }
         }
 
+        public IWebElement GrSlider
+        {
+            get { return _firefox.FindElement(By.XPath(".//*[@id='sliderGP']")); }
+        }
+
         public IWebElement Gr1340
         {
             get { return _firefox.FindElement(By.XPath(".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div")); } // *[@id='COMP_GR'] 
@@ -326,7 +332,7 @@ namespace Planirovanie
 
         public IWebElement AcceptButton
         {
-            get { return _firefox.FindElement(By.XPath("html/body/div[5]/div[3]/div/button[2]")); }
+            get { return _firefox.FindElement(By.XPath(".//*[@aria-labelledby='ui-dialog-title-dialog-plan-settings']/div[3]/div/button[2]")); }
         }
 
         public IWebElement PlansConfirmation

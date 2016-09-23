@@ -62,12 +62,13 @@ namespace Planirovanie
                 var ajaxIsComplete = (bool)(_firefox as IJavaScriptExecutor).ExecuteScript("return jQuery.active == 0");
                 if (ajaxIsComplete)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     break;
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
         }
+
         public void WaitForAjaxWithoutSleep()
         {
             while (true) // Handle timeout somewhere
@@ -102,18 +103,14 @@ namespace Planirovanie
             {
                 try
                 {
-                    WebDriverWait wait = new WebDriverWait(new SystemClock(), _firefox, TimeSpan.FromSeconds(120),
-                        TimeSpan.FromSeconds(5));
+                    WebDriverWait wait = new WebDriverWait(new SystemClock(), _firefox, TimeSpan.FromSeconds(120),TimeSpan.FromSeconds(5));
                     wait.Until(ExpectedConditions.ElementExists(By.XPath(locator)));
-                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
-                    wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(locator)));
+                    
                     _firefox.FindElement(By.XPath(locator)).Click();
                     WaitForAjax();
-                    _firefox.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(60));
-                    _firefox.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(60));
                     return;
                 }
-                catch (StaleElementReferenceException e)
+                catch (Exception e)
                 {
                     if (retries < MAX_STALE_ELEMENT_RETRIES)
                     {
@@ -124,18 +121,6 @@ namespace Planirovanie
                     else
                     {
                         throw e;
-                    }
-                }
-                catch (NoSuchElementException a)
-                {
-                    if (retries < MAX_STALE_ELEMENT_RETRIES)
-                    {
-                        retries++;
-                        continue;
-                    }
-                    else
-                    {
-                        throw a;
                     }
                 }
             }
@@ -161,8 +146,7 @@ namespace Planirovanie
                         Debug.WriteLine("Timeout: Text " + text + " is not found ");
                         break; //если время ожидания закончилось (элемент за выделенное время не был найден)
                     }
-                    _firefox.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(60));
-                    _firefox.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(60));
+                   
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
                     if (_firefox.FindElement(By.XPath(locator)).GetAttribute("title") == text)
                     {
@@ -176,22 +160,13 @@ namespace Planirovanie
                     first = false;
                     Thread.Sleep(waitRetryDelayMs);
                 }
-                catch (StaleElementReferenceException a)
+                catch (Exception a)
                 {
                     if (milliSecond < timeOut * 10000)
                         continue;
                     else
                     {
                         throw a;
-                    }
-                }
-                catch (NoSuchElementException b)
-                {
-                    if (milliSecond < timeOut * 10000)
-                        continue;
-                    else
-                    {
-                        throw b;
                     }
                 }
             }
@@ -212,10 +187,8 @@ namespace Planirovanie
                     Debug.WriteLine("Timeout: Text " + text + " is not found ");
                     break; //если время ожидания закончилось (элемент за выделенное время не был найден)
                 }
-                _firefox.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(60));
-                _firefox.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(60));
+               
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
-                Debug.WriteLine("Loop - element is visible");
                 if (_firefox.FindElement(By.XPath(locator)).Text.ContainsIgnoreCase(text))
                 {
                     Thread.Sleep(2000);
@@ -230,36 +203,6 @@ namespace Planirovanie
             }
         }
 
-        public void WaitPatternPresentInAttribute(string locator, string attribute, string text)
-        {
-            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
-            const int waitRetryDelayMs = 1000; //шаг итерации (задержка)
-            const int timeOut = 500; //время тайм маута 
-            bool first = true;
-
-            for (int milliSecond = 0; ; milliSecond += waitRetryDelayMs)
-            {
-                if (milliSecond > timeOut * 10000)
-                {
-                    Debug.WriteLine("Timeout: Text " + text + " is not found ");
-                    break; //если время ожидания закончилось (элемент за выделенное время не был найден)
-                }
-                _firefox.Manage().Timeouts().SetPageLoadTimeout(TimeSpan.FromSeconds(60));
-                _firefox.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(60));
-                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
-                if (_firefox.FindElement(By.XPath(locator)).GetAttribute(attribute).ContainsIgnoreCase(text))
-                {
-                    Thread.Sleep(2000);
-                    if (!first) Debug.WriteLine("Text is found: " + text);
-                    break; //если элемент найден
-                }
-
-                if (first) Debug.WriteLine("Waiting for text is present: " + text);
-
-                first = false;
-                Thread.Sleep(waitRetryDelayMs);
-            }
-        }
 
         /* public bool IsLoginCorrect()
          {
@@ -286,10 +229,10 @@ namespace Planirovanie
 
         #region Compare Name and Data of Preparations
 
-        public void StoreExcelData()
+        public void StoreExcelData(string path) //@"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx"
         {
             DataTable dt = new DataTable();
-            WorkWithExcelFile.ExcelFileToDataTable(out dt, @"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx",
+            WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
                 "Select * from [Sheet1$]");
             foreach (DataRow row in dt.Rows)
             {
@@ -308,7 +251,27 @@ namespace Planirovanie
                     Summa = Convert.ToDecimal(row["Сумма в рублях"]),
                     Group = row["Группа"].ToString(),
                     IdSotr = Convert.ToInt32(row["id_Sotr"])
-                    };
+                };
+                preparationDataSpravochnik.Add(rowData);
+            }
+        }
+
+        public void StoreExcelDataAny(string path) //@"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx"
+        {
+            DataTable dt = new DataTable();
+            WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
+                "Select * from [Sheet1$]");
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row[0] == DBNull.Value) continue;
+                /* var name = row["Name"].ToString().Trim().Replace("\u00A0", " ").ToLower();*/
+                var rowData = new RowData
+                {
+                    IdPrUniq = Convert.ToInt32(row["id_PrUniq"]),
+                    /* Name = Regex.Replace(name, @"\s+", " "),
+                     Id_BU = Convert.ToInt32(row["id_BU"]),*/
+
+                };
                 preparationDataSpravochnik.Add(rowData);
             }
         }
@@ -531,7 +494,7 @@ namespace Planirovanie
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
             numberTableRows = tableRows.Count;
             Thread.Sleep(2000);
-           
+
             for (int i = 1; i <= numberTableRows; i++)
             {
                 var name =
@@ -1176,54 +1139,6 @@ namespace Planirovanie
         }
 
 
-        public void StoreGr()
-        {
-            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
-            var pageElements = new PageElements(_firefox);
-
-
-            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-            Thread.Sleep(2000);
-            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
-            numberTableRows = tableRows.Count;
-            Thread.Sleep(2000);
-            //Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
-            for (int i = 1; i <= numberTableRows; i++)
-            {
-                wait.Until(
-                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
-                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
-                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
-                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
-
-                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
-                {
-                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
-                    continue;
-                }
-                /* if (preparationId < 0) preparationId *= -1; //  change id from negetive value to positive value*/
-                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
-                Thread.Sleep(500);
-                TryToClickWithoutException(raschetButtonXPath, raschetButton);// click "Расчёт" для выбранного элемента
-                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.Gr1340XPath)));
-                Thread.Sleep(500);
-                var valueGr = pageElements.Gr1340.Text;
-                grListValue.Add("№" + i + " " + preparationId + " " + preparationName + " -- " + valueGr);
-                Console.WriteLine("№" + i + " " + preparationId + " " + preparationName + "--  " + valueGr);
-                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
-                wait.Until(
-                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-            }
-            // File.WriteAllLines(@"D:\Sneghka\GR_Value.doc", grListValue);
-        }
-
-        public void PrintGR()
-        {
-            File.WriteAllLines(@"D:\Sneghka\GR_Value.doc", grListValue);
-        }
-
-
         #endregion
 
         #region Chains
@@ -1348,123 +1263,262 @@ namespace Planirovanie
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var action = new Actions(_firefox);
             var pageElements = new PageElements(_firefox);
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr")); // get list of preparation
             numberTableRows = tableRows.Count;
             Thread.Sleep(2000);
             Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
 
-            for (int i = 1; i <= numberTableRows; i++) // проверяем весь список
-                                                       //for (int i = 34; i <= numberTableRows; i++)
+            for (int i = 1; i <= numberTableRows; i++)
             {
                 wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-                Console.WriteLine("№" + i);
-                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
-                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[2]")).Text;
+               var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
                 var preparationBu = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
 
-                if (_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("plan_status") == "acc")   // acc - утвержден,  new, in,  app
-                {// временно ставлю статус АСС - для проверки теста !!!
-
-                    if (
-                        !_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[5]/input[1]"))
-                            .GetAttribute("class")
-                            .Contains("ui-button-disabled")) // начало проверки на активность кнопки РАСЧЁТ  
-                    {
-                        ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[5]/input[1]")));
-                        Thread.Sleep(500);
-                        TryToClickWithoutException(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[5]/input[1]",
-                            _firefox.FindElement(
-                                By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[5]/input[1]")));
-                        // click "Расчёт" для выбранного элемента
-                        wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.SavePlanButtonXPath)));
-                        TryToClickWithoutException(PageElements.SavePlanButtonXPath, pageElements.SavePlanButton);
-                        wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptButtonXpath)));
-                        TryToClickWithoutException(PageElements.AcceptButtonXpath, pageElements.AcceptButton);
-                        Thread.Sleep(200);
-
-                        _firefox.FindElement(By.XPath("/html/body/div[@class='ui-pnotify ']/div/div[4]/center/input")).Click(); // click "Перейти к утверждению"
-                        WaitForAjax();
-
-                        wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptPlanButtonXPath)));
-                        TryToClickWithoutException(PageElements.AcceptPlanButtonXPath, pageElements.AcceptPlanButton);
-                        WaitForAjax();
-
-                        wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ConfirmPlanButtonXPath)));
-                        TryToClickWithoutException(PageElements.ConfirmPlanButtonXPath, pageElements.ConfirmPlanButton);
-                        WaitForAjax();
-
-                        // ДОБАВИТЬ ПРОВЕРКУ ИЗМЕНЕННИЯ КНОПКИ с "Утвердить" на "Утверждён"
-
-                        Console.WriteLine(preparationName + " - препарат утверждён");
-
-                        TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, pageElements.RaschetPlanaButton);
-                        wait.Until(
-                            ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
-                        TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath,
-                            pageElements.ChoosePreparationButton);
-                        wait.Until(
-                            ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
-
-                    } // конец проверки активности кнопи Расчёт
-                    else
-                    {
-                        Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
-                    }
-                }
-                else
+            if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
                 {
-                    Console.WriteLine("Статус препарата DOM - " + preparationName + ": " + _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("plan_status"));
-                    Console.WriteLine("Статус препарата - " + preparationName + ": " + _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[4]")).Text);
+                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
+                    continue;
+                }
+                if (raschetButton.GetAttribute("plan_status") != "")
+                {
+                    Console.WriteLine(preparationId + " " + preparationName + " - статус - " +raschetButton.GetAttribute("plan-status"));
+                    continue;
                 }
 
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", _firefox.FindElement(By.XPath(raschetButtonXPath)));
+                Thread.Sleep(1500);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(raschetButtonXPath)));
+                TryToClickWithoutException(raschetButtonXPath, raschetButton);
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.SavePlanButtonXPath)));
+                TryToClickWithoutException(PageElements.SavePlanButtonXPath, pageElements.SavePlanButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptButtonXpath)));
+                TryToClickWithoutException(PageElements.AcceptButtonXpath, pageElements.AcceptButton);
+                Thread.Sleep(200);
+
+                _firefox.FindElement(By.XPath("/html/body/div[@class='ui-pnotify ']/div/div[4]/center/input")).Click(); // click "Перейти к утверждению"
+                WaitForAjax();
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptPlanButtonXPath)));
+                TryToClickWithoutException(PageElements.AcceptPlanButtonXPath, pageElements.AcceptPlanButton);
+                WaitForAjax();
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ConfirmPlanButtonXPath)));
+                TryToClickWithoutException(PageElements.ConfirmPlanButtonXPath, pageElements.ConfirmPlanButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='decline_plan']")));
+
+                Console.WriteLine("№" + i + " " + preparationName + " - препарат утверждён");
+
+                TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, pageElements.RaschetPlanaButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
+                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath,pageElements.ChoosePreparationButton);
+                wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
             }
         }
 
         public void ChainsApprove()  // ДОДЕЛАТЬ КОГДА БУДЕТ ДОСТУП
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
-            var action = new Actions(_firefox);
             var pageElements = new PageElements(_firefox);
             Thread.Sleep(2000);
-            /*var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr")); // get list of preparation
-            numberTableRows = tableRows.Count;
-            Thread.Sleep(2000);
-            Debug.WriteLine(numberTableRows + " кол-во строк в таблице");*/
 
-            _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]/td[5]/input[2]")).Click(); // First element's PlanButton 
+            _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]/td[6]/input[2]")).Click(); // First element's PlanButton 
             wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='plan_list']")));
-            var tableRowsPlansApprove = _firefox.FindElements(By.XPath(".//*[@id='preparation_info_short']")); // get list of preparation
+            var tableRowsPlansApprove = _firefox.FindElements(By.XPath(".//*[@id='preparation_info_short']/tbody/tr")); // get list of preparation
             var numberTableRowsPlansApprove = tableRowsPlansApprove.Count;
-            Thread.Sleep(1000);
+            Thread.Sleep(4000);
             Debug.WriteLine(numberTableRowsPlansApprove + " кол-во строк в таблице");
 
-            for (int i = 1; i <= numberTableRowsPlansApprove; i++) // проверяем весь список
-                                                                   //for (int i = 34; i <= numberTableRowsPlansApprove; i++)
+            for (int i = 1; i <= numberTableRowsPlansApprove; i++)
             {
                 wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info_short']")));
-                Console.WriteLine("№" + i);
                 var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info_short']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationNameXPath = ".//*[@id='preparation_info_short']/tbody/tr[" + i + "]/td[2]";
                 var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info_short']/tbody/tr[" + i + "]/td[2]")).Text;
+                var preparationStatusXPath = ".//*[@id='preparation_info_short']/tbody/tr[" + i + "]/td[3]";
+                var preparationStatus = _firefox.FindElement(By.XPath(preparationStatusXPath));
 
-
-                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", _firefox.FindElement(By.XPath(".//*[@id='preparation_info_short']/tbody/tr[" + i + "]/td[2]")));
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", _firefox.FindElement(By.XPath(preparationNameXPath)));
                 Thread.Sleep(500);
-                TryToClickWithoutException(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[2]", _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[2]")));// click выбранный элемент
-                try
+                TryToClickWithoutException(preparationNameXPath, _firefox.FindElement(By.XPath(preparationNameXPath)));// click выбранный элемент
+
+                if (preparationStatus.Text == "одобрен")
                 {
-                    wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.ApprovePlanButtonXPath)));
-                    TryToClickWithoutException(PageElements.ApprovePlanButtonXPath, pageElements.ApprovePlanButton); // поставить проверку статуса кнопки после клика (когда приложение будет доступно)
-                    WaitForAjax();
-                    Thread.Sleep(200);
-                    Console.WriteLine(preparationId + " " + preparationName + " - препарат одобрен");
+                    Console.WriteLine("№" + i + " " + preparationId + " " + preparationName + " - препарат уже одобрен");
+                    continue;
                 }
-                catch (NoSuchElementException)
-                {
-                    Console.WriteLine(preparationId + " " + preparationName + " - Кнопка одобрения не найдена");
-                }
+
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.ApprovePlanButtonXPath)));
+                TryToClickWithoutException(PageElements.ApprovePlanButtonXPath, pageElements.ApprovePlanButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[5]/div[3]/div/button[1]")));
+                TryToClickWithoutException("html/body/div[5]/div[3]/div/button[1]", _firefox.FindElement(By.XPath("html/body/div[5]/div[3]/div/button[1]")));
+                WaitForAjax();
+                TryToClickWithoutException(PageElements.RefreshButtonXPath, pageElements.RefreshButton);
+                WaitPatternPresentInText(preparationStatusXPath, "одобрен");
+                Thread.Sleep(200);
+                Console.WriteLine("№" + i + " " + preparationId + " " + preparationName + " - препарат одобрен");
             }
         }
+
+
+        #endregion
+
+        #region GR
+        
+        public void StoreGr()
+        {
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+
+
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(2000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
+            numberTableRows = tableRows.Count;
+            Thread.Sleep(2000);
+            //Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
+            for (int i = 1; i <= numberTableRows; i++)
+            {
+                wait.Until(
+                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
+                    continue;
+                }
+                /* if (preparationId < 0) preparationId *= -1; //  change id from negetive value to positive value*/
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                TryToClickWithoutException(raschetButtonXPath, raschetButton);// click "Расчёт" для выбранного элемента
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.Gr1340XPath)));
+                Thread.Sleep(500);
+                var valueGr = pageElements.Gr1340.Text;
+                grListValue.Add("№" + i + " " + preparationId + " " + preparationName + " -- " + valueGr);
+                Console.WriteLine("№" + i + " " + preparationId + " " + preparationName + "--  " + valueGr);
+                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
+                wait.Until(
+                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            }
+            // File.WriteAllLines(@"D:\Sneghka\GR_Value.doc", grListValue);
+        }
+
+        public void PrintGR()
+        {
+            File.WriteAllLines(@"D:\Sneghka\GR_Value.doc", grListValue);
+        }
+
+        public void IsGrUnchangeable()
+        {
+
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(2000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
+            numberTableRows = tableRows.Count;
+            Thread.Sleep(2000);
+            Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
+
+            for (int i = 1; i <= numberTableRows; i++)
+            {
+
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                if (!preparationDataSpravochnik.GetIdList().Contains(preparationId)) continue;
+
+                var preparationBuId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine("Кнопка расчёт неактивна - " + preparationName);
+                    continue;
+                }
+                Thread.Sleep(1000);
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                TryToClickWithoutException(raschetButtonXPath, raschetButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TotalPcsXPath)));
+                var sliderGrClass = pageElements.GrSlider.GetAttribute("class");
+
+                if (!sliderGrClass.Contains("ui-slider-disabled"))
+                {
+                    Console.WriteLine("№" + i + " " + preparationId + " " + " " + preparationName + ": Слайдер АКТИВЕН");
+                }
+                else
+                {
+                    Console.WriteLine("№" + i + " " + preparationId + " " + " " + preparationName + ": Слайдер НЕАКТИВЕН");
+                }
+
+                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
+                wait.Until(
+                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            }
+
+        }
+
+        public void IsGrChangeable()
+        {
+
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(2000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
+            numberTableRows = tableRows.Count;
+            Thread.Sleep(2000);
+            Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
+
+            for (int i = 1; i <= numberTableRows; i++)
+            {
+
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                if (!preparationDataSpravochnik.GetIdList().Contains(preparationId)) continue;
+
+                var preparationBuId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine("Кнопка расчёт неактивна - " + preparationName);
+                    continue;
+                }
+                Thread.Sleep(1000);
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                TryToClickWithoutException(raschetButtonXPath, raschetButton);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TotalPcsXPath)));
+                var sliderGrClass = pageElements.GrSlider.GetAttribute("class");
+
+                if (!sliderGrClass.Contains("ui-slider-disabled"))
+                {
+                    Console.WriteLine("№" + i + " " + preparationId + " " + " " + preparationName + ": Слайдер АКТИВЕН");
+                }
+                else
+                {
+                    Console.WriteLine("№" + i + " " + preparationId + " " + " " + preparationName + ": Слайдер НЕАКТИВЕН");
+                }
+
+                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
+                wait.Until(
+                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            }
+
+        }
+
         #endregion
     }
 }
