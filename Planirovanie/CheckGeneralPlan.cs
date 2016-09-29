@@ -250,8 +250,7 @@ namespace Planirovanie
             string[] chainPM_BU112 = new string[] { "754", "8061" };
 
 
-
-            foreach (var user in chainPM_BU1340)
+            foreach (var user in chainPM_BU88)
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");

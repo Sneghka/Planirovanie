@@ -103,9 +103,9 @@ namespace Planirovanie
             {
                 try
                 {
-                    WebDriverWait wait = new WebDriverWait(new SystemClock(), _firefox, TimeSpan.FromSeconds(120),TimeSpan.FromSeconds(5));
+                    WebDriverWait wait = new WebDriverWait(new SystemClock(), _firefox, TimeSpan.FromSeconds(120), TimeSpan.FromSeconds(5));
                     wait.Until(ExpectedConditions.ElementExists(By.XPath(locator)));
-                    
+
                     _firefox.FindElement(By.XPath(locator)).Click();
                     WaitForAjax();
                     return;
@@ -146,7 +146,7 @@ namespace Planirovanie
                         Debug.WriteLine("Timeout: Text " + text + " is not found ");
                         break; //если время ожидания закончилось (элемент за выделенное время не был найден)
                     }
-                   
+
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
                     if (_firefox.FindElement(By.XPath(locator)).GetAttribute("title") == text)
                     {
@@ -187,7 +187,7 @@ namespace Planirovanie
                     Debug.WriteLine("Timeout: Text " + text + " is not found ");
                     break; //если время ожидания закончилось (элемент за выделенное время не был найден)
                 }
-               
+
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
                 if (_firefox.FindElement(By.XPath(locator)).Text.ContainsIgnoreCase(text))
                 {
@@ -199,6 +199,28 @@ namespace Planirovanie
                 if (first) Debug.WriteLine("Waiting for text is present: " + text);
 
                 first = false;
+                Thread.Sleep(waitRetryDelayMs);
+            }
+        }
+
+        public void WaitPatternPresentInAttribute(string locator, string attr, string text)
+        {
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            const int waitRetryDelayMs = 500; //шаг итерации (задержка)
+            const int timeOut = 500; //время тайм маута 
+
+            for (int milliSecond = 0; ; milliSecond += waitRetryDelayMs)
+            {
+                if (milliSecond > timeOut * 10000)
+                {
+                    break; //если время ожидания закончилось (элемент за выделенное время не был найден)
+                }
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
+                if (_firefox.FindElement(By.XPath(locator)).GetAttribute(attr).ContainsIgnoreCase(text))
+                {
+                    break; //если элемент найден
+                }
                 Thread.Sleep(waitRetryDelayMs);
             }
         }
@@ -1272,20 +1294,20 @@ namespace Planirovanie
             for (int i = 1; i <= numberTableRows; i++)
             {
                 wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-               var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
                 var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
                 var preparationBu = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
                 var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
                 var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
 
-            if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
                 {
                     Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
                     continue;
                 }
                 if (raschetButton.GetAttribute("plan_status") != "")
                 {
-                    Console.WriteLine(preparationId + " " + preparationName + " - статус - " +raschetButton.GetAttribute("plan-status"));
+                    Console.WriteLine(preparationId + " " + preparationName + " - статус - " + raschetButton.GetAttribute("plan-status"));
                     continue;
                 }
 
@@ -1314,7 +1336,7 @@ namespace Planirovanie
 
                 TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, pageElements.RaschetPlanaButton);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
-                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath,pageElements.ChoosePreparationButton);
+                TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
                 wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
             }
         }
@@ -1367,7 +1389,7 @@ namespace Planirovanie
         #endregion
 
         #region GR
-        
+
         public void StoreGr()
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
@@ -1398,16 +1420,16 @@ namespace Planirovanie
                 ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
                 Thread.Sleep(500);
                 TryToClickWithoutException(raschetButtonXPath, raschetButton);// click "Расчёт" для выбранного элемента
-                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.Gr1340XPath)));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
                 Thread.Sleep(500);
-                var valueGr = pageElements.Gr1340.Text;
+                var valueGr = _firefox.ExecuteScript("return document.getElementById('COMP_GR').previousSibling.innerHTML;");
                 grListValue.Add("№" + i + " " + preparationId + " " + preparationName + " -- " + valueGr);
                 Console.WriteLine("№" + i + " " + preparationId + " " + preparationName + "--  " + valueGr);
                 TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
                 wait.Until(
                     ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
             }
-            // File.WriteAllLines(@"D:\Sneghka\GR_Value.doc", grListValue);
+             File.WriteAllLines(@"D:\Sneghka\Selenium\Created documents\GR_Value.doc", grListValue);
         }
 
         public void PrintGR()
