@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EcxelObj\CheckXlsFiles.cs" />
-    <Compile Include="EcxelObj\CompareXlsFiles.cs" />
+    <Compile Include="EcxelObj\CompareXlsFilesMethods.cs" />
     <Compile Include="FitoFharm\CheckPlanirovschikFitoFharm.cs" />
     <Compile Include="EcxelObj\UniversalExcelObj.cs" />
     <Compile Include="EcxelObj\UniversalExcelObjList.cs" />
