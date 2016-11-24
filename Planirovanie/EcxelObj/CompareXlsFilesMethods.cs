@@ -89,66 +89,84 @@ namespace Planirovanie.EcxelObj
             List<UniversalExcelObj> sortedFile_2 = FileXls_2.OrderByDescending(o => o.ID).ToList();
 
 
+            var IdLastElemFile1 = sortedFile_1[sortedFile_1.Count - 1].ID;
+            var IdLastElemFile2 = sortedFile_2[sortedFile_2.Count - 1].ID;
 
-            var minArrayLenght = sortedFile_1.Count < sortedFile_2.Count ? sortedFile_1.Count : sortedFile_2.Count;
-            int j = 0;
-            int lastIndexEquivalentInFile1 = 0;
-            int lastIndexEquivalentInFile2 = 0;
+            int x = 0;
+            int y = 0;
 
-            for (int i = 0; i < minArrayLenght;)
+            while (x <= sortedFile_1.Count - 1 && y <= sortedFile_2.Count - 1)
             {
-                lastIndexEquivalentInFile1 = i;
-                lastIndexEquivalentInFile2 = j;
-
-                if (sortedFile_1[i].ID == sortedFile_2[j].ID)
+                if (sortedFile_1[x].ID < sortedFile_2[y].ID)
                 {
-                   
-                    if (!sortedFile_1[i].IsEqual(sortedFile_2[j]))
+                    Console.WriteLine("Элемент из второго списка - " + sortedFile_2[y].ID +
+                                      " -  не содержится в первом списке");
+                    if (sortedFile_2[y].ID == IdLastElemFile2)
                     {
-                        OutputMismatchFields(sortedFile_1, sortedFile_2, i, j);
-                        i++;
-                        j++;
-                        continue;
+                        Console.WriteLine("Элемент из первого списка  - " + sortedFile_1[x].ID +
+                                      " -  не содержится во втором списке");
                     }
-                    i++;
-                    j++;
+                    y++;
                     continue;
                 }
-
-                if (sortedFile_1[i].ID < sortedFile_2[j].ID)
+                if (sortedFile_1[x].ID > sortedFile_2[y].ID)
                 {
-                    Console.WriteLine("Элемент из второго списка - " + sortedFile_2[j].ID +
-                                      " -  не содержится в первом списке");
-                    j++;
+                    Console.WriteLine("Элемент из первого списка - " + sortedFile_1[x].ID +
+                                      " -  не содержится во вотором списке");
+                    if (sortedFile_1[x].ID == IdLastElemFile1)
+                    {
+                        Console.WriteLine("Элемент из второго списка - " + sortedFile_2[y].ID +
+                                     " -  не содержится в первом списке");
+                    }
+                    x++;
+                    continue;
                 }
-                if (sortedFile_1[i].ID > sortedFile_2[j].ID)
+                if (sortedFile_1[x].ID == sortedFile_2[y].ID)
+                {
+                    if (!sortedFile_1[x].IsEqual(sortedFile_2[y]))
+                    {
+                        OutputMismatchFields(sortedFile_1, sortedFile_2, x, y);
+                    }
+                    x++;
+                    y++;
+                }
+            }
+
+
+            if (IdLastElemFile1 == sortedFile_1[x - 1].ID)
+            {
+                if (sortedFile_1[x - 1].ID == sortedFile_2[y - 1].ID)
+                {
+                    for (int i = y; i < sortedFile_2.Count; i++)
+                    {
+                        Console.WriteLine("Элемент из второго списка - " + sortedFile_2[i].ID +
+                                         " -  не содержится в первом списке");
+                    }
+                    return;
+                }
+                for (int i = y + 1; i < sortedFile_2.Count; i++)
+                {
+                    Console.WriteLine("Элемент из второго списка - " + sortedFile_2[i].ID +
+                                     " -  не содержится в первом списке");
+                }
+            }
+            if (IdLastElemFile2 == sortedFile_2[y - 1].ID)
+            {
+                if (sortedFile_1[x - 1].ID == sortedFile_2[y - 1].ID)
+                {
+                    for (int i = x; i < sortedFile_1.Count; i++)
+                    {
+                        Console.WriteLine("Элемент из второго списка - " + sortedFile_1[i].ID +
+                                         " -  не содержится в первом списке");
+                    }
+                    return;
+                }
+                for (int i = x + 1; i < sortedFile_1.Count; i++)
                 {
                     Console.WriteLine("Элемент из первого списка - " + sortedFile_1[i].ID +
-                                      " -  не содержится во вотором списке");
-                    i++;
+                                     " -  не содержится во втором списке");
                 }
             }
-
-            if (lastIndexEquivalentInFile2 < sortedFile_2.Count-1)
-            {
-                for (int n = lastIndexEquivalentInFile2 + 1; n < sortedFile_2.Count; n++)
-                {
-                    Console.WriteLine("Элемент из второго списка - " + sortedFile_2[n].ID +
-                                      " -  не содержится в первом списке");
-                }
-            }
-
-            if (lastIndexEquivalentInFile1 < sortedFile_1.Count - 1)
-            {
-                for (int n = lastIndexEquivalentInFile1 + 1; n < sortedFile_1.Count; n++)
-                {
-                    Console.WriteLine("Элемент из первого списка - " + sortedFile_1[n].ID +
-                                      " -  не содержится во вотором списке");
-                }
-            }
-
-
-
         }
     }
 }
