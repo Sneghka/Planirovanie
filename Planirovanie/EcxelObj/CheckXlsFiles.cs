@@ -16,7 +16,7 @@ namespace Planirovanie.EcxelObj
 
         const string path_file1 = @"D:\Sneghka\Selenium\Projects\Files\alg_new.xlsx";
         const string path_file2 = @"D:\Sneghka\Selenium\Projects\Files\alg_old.xlsx";
-       /* const string path_file1 = @"D:\Sneghka\Selenium\Projects\Files\alg_new1.xlsx";
+        /*const string path_file1 = @"D:\Sneghka\Selenium\Projects\Files\alg_new1.xlsx";
         const string path_file2 = @"D:\Sneghka\Selenium\Projects\Files\alg_old1.xlsx";*/
         [Test]
         public void CompareFieldsInExlFiles()

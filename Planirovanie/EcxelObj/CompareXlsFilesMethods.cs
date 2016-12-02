@@ -78,8 +78,6 @@ namespace Planirovanie.EcxelObj
             if (item1[i].Field8 != item2[j].Field8) Console.WriteLine("Не совпадает поле 8");
             if (item1[i].Field9 != item2[j].Field9) Console.WriteLine("Не совпадает поле 9");
             if (item1[i].Field10 != item2[j].Field10) Console.WriteLine("Не совпадает поле 10");
-
-
         }
 
         public static void CompareAllFieldsById()
@@ -88,26 +86,30 @@ namespace Planirovanie.EcxelObj
             List<UniversalExcelObj> sortedFile_1 = FileXls_1.OrderByDescending(o => o.ID).ToList();
             List<UniversalExcelObj> sortedFile_2 = FileXls_2.OrderByDescending(o => o.ID).ToList();
 
+            var lengthFile1 = sortedFile_1.Count;
+            var lengthFile2 = sortedFile_2.Count;
+
             int x = 0;
             int y = 0;
 
-            while (x <= sortedFile_1.Count - 1 && y <= sortedFile_2.Count - 1)
+            while (x < lengthFile1 || y < lengthFile2)
             {
-                if (sortedFile_1[x].ID < sortedFile_2[y].ID)
+
+                if (x < lengthFile1 && y < lengthFile2 && sortedFile_1[x].ID < sortedFile_2[y].ID)
                 {
                     Console.WriteLine("Элемент из второго списка - " + sortedFile_2[y].ID +
                                       " -  не содержится в первом списке");
                     y++;
                     continue;
                 }
-                if (sortedFile_1[x].ID > sortedFile_2[y].ID)
+                if (x < lengthFile1 && y < lengthFile2 && sortedFile_1[x].ID > sortedFile_2[y].ID)
                 {
                     Console.WriteLine("Элемент из первого списка - " + sortedFile_1[x].ID +
                                       " -  не содержится во вотором списке");
                     x++;
                     continue;
                 }
-                if (sortedFile_1[x].ID == sortedFile_2[y].ID)
+                if (x < lengthFile1 && y < lengthFile2 && sortedFile_1[x].ID == sortedFile_2[y].ID)
                 {
                     if (!sortedFile_1[x].IsEqual(sortedFile_2[y]))
                     {
@@ -115,22 +117,21 @@ namespace Planirovanie.EcxelObj
                     }
                     x++;
                     y++;
+                    continue;
                 }
-            }
-            
-            while (y < sortedFile_2.Count || x < sortedFile_1.Count)
-            {
-                if (!(y >= sortedFile_2.Count))
+
+                if (y >= lengthFile2)
+                {
+                    Console.WriteLine("Элемент из первого списка - " + sortedFile_1[x].ID +
+                                      " -  не содержится во втором списке");
+                    x++;
+                    continue;
+                }
+                if (x >= lengthFile1)
                 {
                     Console.WriteLine("Элемент из второго списка - " + sortedFile_2[y].ID +
                                      " -  не содержится в первом списке");
                     y++;
-                }
-                if (!(x >= sortedFile_1.Count))
-                {
-                    Console.WriteLine("Элемент из первого списка - " + sortedFile_1[x].ID +
-                                     " -  не содержится во втором списке");
-                    x++;
                 }
             }
         }
