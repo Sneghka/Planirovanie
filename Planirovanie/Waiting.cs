@@ -13,10 +13,8 @@ namespace Planirovanie
 {
     public static class Waiting
     {
-        private static  readonly FirefoxDriver _firefox;
 
-
-        public static void WaitForAjax()
+        public static void WaitForAjax(FirefoxDriver _firefox)
         {
             while (true) // Handle timeout somewhere
             {
@@ -30,7 +28,7 @@ namespace Planirovanie
             }
         }
 
-        public static void WaitForAjaxWithoutSleep()
+        public static void WaitForAjaxWithoutSleep(FirefoxDriver _firefox)
         {
             while (true) // Handle timeout somewhere
             {
@@ -42,9 +40,9 @@ namespace Planirovanie
             }
         }
 
-        public static  void WaitForTextInTitleAttribute(string locator, string text)
+        public static void WaitForTextInTitleAttribute(string locator, string text, FirefoxDriver _firefox)
         {
-            /*WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));*/
+
             const int waitRetryDelayMs = 1000; //шаг итерации (задержка)
             const int timeOut = 500; //время тайм маута 
             bool first = true;
@@ -87,12 +85,12 @@ namespace Planirovanie
 
         }
 
-        public static void WaitPatternPresentInText(string locator, string text)
+        public static void WaitPatternPresentInText(string locator, string text, FirefoxDriver _firefox)
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             const int waitRetryDelayMs = 1000; //шаг итерации (задержка)
             const int timeOut = 500; //время тайм маута 
-         
+
             for (int milliSecond = 0; ; milliSecond += waitRetryDelayMs)
             {
                 if (milliSecond > timeOut * 10000)
@@ -104,13 +102,13 @@ namespace Planirovanie
                 if (_firefox.FindElement(By.XPath(locator)).Text.ContainsIgnoreCase(text))
                 {
                     Thread.Sleep(1000);
-                   break; //если элемент найден
+                    break; //если элемент найден
                 }
                 Thread.Sleep(waitRetryDelayMs);
             }
         }
 
-        public static void WaitPatternPresentInAttribute(string locator, string attr, string text)
+        public static void WaitPatternPresentInAttribute(string locator, string attr, string text, FirefoxDriver _firefox)
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             const int waitRetryDelayMs = 500; //шаг итерации (задержка)
@@ -131,9 +129,5 @@ namespace Planirovanie
                 Thread.Sleep(waitRetryDelayMs);
             }
         }
-
-
-
-
     }
 }

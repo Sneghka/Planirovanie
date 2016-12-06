@@ -30,9 +30,9 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 10, 11, 12 };
+            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx"); 
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
@@ -50,9 +50,9 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 7, 8, 9, 10, 11, 12 };
+            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.CheckPreparationData(months);
@@ -72,7 +72,7 @@ namespace Planirovanie
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.CheckPreparationListForPM(user);
                 method.LogoutStada(logoutTest);
             }
@@ -189,7 +189,7 @@ namespace Planirovanie
             {
                 method.LoginStada(test, "user_" + user, "1");
                Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.ChainsAccept();   // Добавить в метод - ПРОВЕРКУ ИЗМЕНЕННИЯ КНОПКИ с "Утвердить" на "Утверждён"
                 method.LogoutStada(logoutTest);
             }
@@ -220,7 +220,7 @@ namespace Planirovanie
             {
                 method.LoginStada(stada, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.ChainsApprove();   // Добавить в метод - ПРОВЕРКУ ИЗМЕНЕННИЯ КНОПКИ с "Утвердить" на "Утверждён"
                 method.LogoutStada(logoutStada);
             }
@@ -252,7 +252,7 @@ namespace Planirovanie
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.StoreGr();
                 method.PrintGR();
                 method.LogoutStada(logoutTest);
@@ -281,7 +281,7 @@ namespace Planirovanie
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.IsGrUnchangeable();
 
                 method.LogoutStada(logoutTest);
@@ -310,7 +310,7 @@ namespace Planirovanie
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 method.IsGrChangeable();
                 method.LogoutStada(logoutTest);
             }

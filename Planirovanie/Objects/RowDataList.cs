@@ -15,6 +15,18 @@ namespace Planirovanie
                     where r.Group != "не планируем в Планировщике" && months.Contains(r.Month)
                     select r.WebName).Distinct().ToList();
         }
+        public int GetTotalSumPcsById(int id, int[] months)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && months.Contains(r.Month)
+                    select r.Upakovki).Sum();
+        }
+        public decimal GetTotalSumRubById(int id, int[] months)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && months.Contains(r.Month)
+                    select r.Summa).Sum();
+        }
         public List<string> GetUniqueNames()
         {
             //return this.Select(r => r.WebName).Distinct().ToList();
@@ -76,18 +88,7 @@ namespace Planirovanie
                     where r.IdPrUniq == id && r.Month == month && r.Segment == segment
                     select r.Upakovki).Sum();
         }
-        public int GetTotalSumPcsById(int id)
-        {
-            return (from r in this
-                    where r.IdPrUniq == id && (r.Month == 7 || r.Month == 8 || r.Month == 9 || r.Month == 10 || r.Month == 11 || r.Month == 12)
-                    select r.Upakovki).Sum();
-        }
-        public decimal GetTotalSumRubById(int id)
-        {
-            return (from r in this
-                    where r.IdPrUniq == id && (r.Month == 7 || r.Month == 8 || r.Month == 9 || r.Month == 10 || r.Month == 11 || r.Month == 12)
-                    select r.Summa).Sum();
-        }
+       
 
         
         public int GetSumByChoosenMonth(int month)

@@ -160,29 +160,29 @@ namespace Planirovanie
                 ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", _firefox.FindElement(By.XPath(raschetButtonXPath)));
                 Thread.Sleep(1500);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(raschetButtonXPath)));
-                Helper.TryToClickWithoutException(raschetButtonXPath, raschetButton);
+                Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.SavePlanButtonXPath)));
-                Helper.TryToClickWithoutException(PageElements.SavePlanButtonXPath, pageElements.SavePlanButton);
+                Helper.TryToClickWithoutException(PageElements.SavePlanButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptButtonXpath)));
-                Helper.TryToClickWithoutException(PageElements.AcceptButtonXpath, pageElements.AcceptButton);
+                Helper.TryToClickWithoutException(PageElements.AcceptButtonXpath, _firefox);
                 Thread.Sleep(200);
 
                 _firefox.FindElement(By.XPath("/html/body/div[@class='ui-pnotify ']/div/div[4]/center/input")).Click(); // click "Перейти к утверждению"
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(_firefox);
 
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptPlanButtonXPath)));
-                Helper.TryToClickWithoutException(PageElements.AcceptPlanButtonXPath, pageElements.AcceptPlanButton);
-                Waiting.WaitForAjax();
+                Helper.TryToClickWithoutException(PageElements.AcceptPlanButtonXPath, _firefox);
+                Waiting.WaitForAjax(_firefox);
 
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ConfirmPlanButtonXPath)));
-                Helper.TryToClickWithoutException(PageElements.ConfirmPlanButtonXPath, pageElements.ConfirmPlanButton);
+                Helper.TryToClickWithoutException(PageElements.ConfirmPlanButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='decline_plan']")));
 
                 Console.WriteLine("№" + i + " " + preparationName + " - препарат утверждён");
 
-                Helper.TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, pageElements.RaschetPlanaButton);
+                Helper.TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
-                Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, pageElements.ChoosePreparationButton);
+                Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
             }
         }

@@ -50,7 +50,7 @@ namespace Planirovanie
             {
                 fitoFharmMethods.LoginPlanirovschik(fitofharm, user, "1");
                 Console.WriteLine("User - " + user + ":");
-                Waiting.WaitForAjax();
+                Waiting.WaitForAjax(firefox);
                 fitoFharmMethods.ChainsAccept();   
                 fitoFharmMethods.LogoutFitoFharm(lpgoutFitoFarm);
             }
