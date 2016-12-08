@@ -26,5 +26,22 @@ namespace Planirovanie
         {
             get { return Segment == 2 ? Name + " (льгота)" : Name; }
         }
+
+        public bool IsEqualByNameAndIdWithSegment(RowData anotheRowData)
+        {
+            if (Segment == 2) IdPrUniq = IdPrUniq*-1;
+
+            if (Name == anotheRowData.Name && IdPrUniq == anotheRowData.IdPrUniq) return true;
+            return false;
+
+        }
+        public bool IsEqualByNameAndIdWithoutSegment(RowData anotheRowData)
+        {
+            if (anotheRowData.Segment == 2) anotheRowData.IdPrUniq = anotheRowData.IdPrUniq * -1;
+
+            if (Name == anotheRowData.Name && IdPrUniq == anotheRowData.IdPrUniq) return true;
+            return false;
+
+        }
     }
 }

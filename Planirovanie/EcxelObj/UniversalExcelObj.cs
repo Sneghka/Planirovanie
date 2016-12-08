@@ -41,11 +41,7 @@ namespace Planirovanie.Objects
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
-
+            return false;
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Data;
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 
 namespace Planirovanie
@@ -77,7 +78,7 @@ namespace Planirovanie
                     Upakovki = Convert.ToInt32(row["Сумма в упаковках"]),
                     Summa = Convert.ToDecimal(row["Сумма в рублях"]),
                     Group = row["Группа"].ToString(),
-                    /*IdSotr = Convert.ToInt32(row["id_Sotr"])*/
+                    IdSotr = Convert.ToInt32(row["id_Sotr"])
                 };
                 preparationDataSpravochnik.Add(rowData);
             }
@@ -114,8 +115,22 @@ namespace Planirovanie
             pageElements.LoginField.SendKeys(login);
             pageElements.PasswordField.SendKeys(password);
             pageElements.SubmitButton.Click();
-            wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
-            Thread.Sleep(2000);
+          /* wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));*/
+            Thread.Sleep(5000);
+        }
+
+        public bool IsLoginSuccess(string url, string login, string password)
+        {
+            if (_firefox.FindElement(By.XPath(".//*[@id='dialog-confirm']")).GetAttribute("style") == "display: none;")
+                return true;
+            return false;
+        }
+
+        public bool IsPreparationListExist()
+        {
+            if (Helper.IsElementPresent(By.XPath("html/body/div[4]/div[3]/div/button[1]"), _firefox)) //кнопка "Закрыть" на списке препаратов
+                return true;
+            return false;
         }
 
         public void StorePreparationNamesFromPlanirovschik()
@@ -154,10 +169,24 @@ namespace Planirovanie
             }
         }
 
+        public void TestName2(int[] months)
+        {
+            var test = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
+
+            for (int i = 0; i < 400;  i++)
+            {
+             Console.WriteLine(test[i].IdPrUniq + " / " + test[i].Name + " / segment - " + test[i].Segment + " / group -  " + test[i].Group  );   
+            }
+
+           /* foreach (var t in test)
+            {
+            Console.WriteLine(t.IdPrUniq + " / " + t.Name + " / segment - " + t.Segment + " / group -  " + t.Group);
+            }*/
+        }
+
         public void CompareWebWithExcel(int[] months)
         {
-            var difference = RowDataList.CompareStrings(preparationNamePlanirovschik.GetNamesList(),
-                preparationDataSpravochnik.GetUniqueWebNames(months));
+            var difference = RowDataList.CompareStrings(preparationNamePlanirovschik.GetNamesList(),preparationDataSpravochnik.GetUniqueWebNames(months));
             if (difference.Count == 0)
             {
                 Debug.WriteLine("Расхождений нет");
@@ -173,8 +202,9 @@ namespace Planirovanie
 
         public void CompareExcelWithWeb(int[] months)
         {
-            var difference = RowDataList.CompareStrings(preparationDataSpravochnik.GetUniqueWebNames(months),
-                preparationNamePlanirovschik.GetNamesList());
+            var difference = RowDataList.CompareStrings(preparationDataSpravochnik.GetUniqueWebNames(months),preparationNamePlanirovschik.GetNamesList());
+         
+
             Debug.WriteLine(difference.Count + "Count");
             if (difference.Count == 0)
             {
@@ -204,7 +234,7 @@ namespace Planirovanie
 
         public void MessageCheckPreparationMethodTotal(int preparationId, int[] months, decimal totalSum, int totalPcs)
         {
-            if ((preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) - totalSum) < 2 && preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) - totalSum > -2)
+            if ((preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) - totalSum) < 5 && preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) - totalSum > -5)
             {
                 Console.WriteLine("Total sum: справочник " + preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) + " = " + totalSum + " планировщик");
             }
@@ -347,7 +377,7 @@ namespace Planirovanie
                 preparationNamePlanirovschik.Add(rowData);
             }
 
-            var listPreparationIDSpravochnik = preparationDataSpravochnik.GetIdListByUser(user);
+            var listPreparationIDSpravochnik = preparationDataSpravochnik.GetIdListByUserWithoutAutoplan(user);
             var listPreparationIDPlanirovschik = preparationNamePlanirovschik.GetIdList();
 
             var compareWebwithExcel = RowDataList.CompareNumbers(listPreparationIDPlanirovschik, listPreparationIDSpravochnik);
@@ -370,6 +400,17 @@ namespace Planirovanie
                 }
             }
             Console.WriteLine("Проверено");
+        }
+
+        public void GetListPreparationFromExcelForUser(int user)
+        {
+            var listPreparationIDSpravochnik = preparationDataSpravochnik.GetIdListByUserWithoutAutoplan(user);
+
+           Console.WriteLine("User_" + user + "Препараты отсутствуют в планировщике:");
+            foreach (var preparation in listPreparationIDSpravochnik)
+            {
+                Console.WriteLine(preparation);
+            }
         }
 
         #endregion
@@ -1012,16 +1053,14 @@ namespace Planirovanie
             int i = 1;
             for (int a = 189; a < loginPasswordList.Count; a++)
             {
-                /* foreach (var user in loginPasswordList)
-                 {*/
+               
                 pageElements.LoginField.Clear();
                 pageElements.PasswordField.Clear();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SubmitButtonXPath)));
                 pageElements.LoginField.SendKeys(loginPasswordList[a].Login);
                 pageElements.PasswordField.SendKeys(loginPasswordList[a].Password);
                 pageElements.SubmitButton.Click();
-                //wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(".//*[@id='dialog_init']/div[6]")));
-                //WaitPatternPresentInAttribute(".//*[@id='dialog_init']/div[6]","style", "display: none;"); // ожидание загрузки после ввода логина "Подождите"
+               
                 Thread.Sleep(4000);
                 if (_firefox.FindElement(By.XPath(".//*[@id='dialog-confirm']")).GetAttribute("style") == "display: none;")
                 {

@@ -32,17 +32,49 @@ namespace Planirovanie
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx"); 
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
             Debug.WriteLine("Planirovschik was stored");
-            Debug.WriteLine("Сравниваем ексель с планировщиком");
+            Debug.WriteLine("Данные есть в справочинке, но отсутсвуют в планировщике планировщиком");
             method.CompareExcelWithWeb(months); //STADA
-            Debug.WriteLine("Сравниваем Планировщик с екселем");
+            Debug.WriteLine("Данные есть в планировщике, но отсутствуют в справочнике");
             method.CompareWebWithExcel(months);//STADA
-            
+
             firefox.Quit();
+        }
+        [Test]
+        public void CheckPreparationsName2()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
+            Debug.WriteLine("Excel was stored");
+            method.LoginStada(test, "user_1340", "1");
+            method.StorePreparationNamesFromPlanirovschik();
+            Debug.WriteLine("Planirovschik was stored");
+            Debug.WriteLine("Данные есть в справочинке, но отсутсвуют в планировщике планировщиком");
+            method.CompareExcelWithWeb(months); //STADA
+            Debug.WriteLine("Данные есть в планировщике, но отсутствуют в справочнике");
+            method.CompareWebWithExcel(months);//STADA
+
+            firefox.Quit();
+        }
+
+        [Test]
+        public void TestName()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
+            Debug.WriteLine("Excel was stored");
+            method.TestName2(months);
+           firefox.Quit();
         }
 
         [Test]
@@ -65,12 +97,27 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-            int[] chainPM = { 2200, 1965, 2718, 8030, 1901, 2195, 1590, 1763, 2128, 2494, 8003, 1172, 2708, 1638, 1174, 2393, 1788, 2113, 2222, 2711, 2149, 2205, 1514, 1598, 754, 8061, 8012, 8013 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\GP_24.08.2016.xlsx");
+            int[] chainPM = { 58, 754, 1167, 1174, 1598, 1638, 1901, 1965, 2071, 2113, 2128, 2195, 2200, 2205, 2206, 2212, 2494, 2708, 2711, 2718, 2849 };
+
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
             foreach (var user in chainPM)
             {
+
                 method.LoginStada(test, "user_" + user, "1");
+                if (!method.IsLoginSuccess(test, user.ToString(), "1"))
+                {
+                    Console.WriteLine("user_" + user + "  Incorrect login or password");
+                    firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+                if (!method.IsPreparationListExist())
+                {
+                    method.GetListPreparationFromExcelForUser(user);
+                    firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+
                 Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
                 method.CheckPreparationListForPM(user);
@@ -169,7 +216,7 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-           
+
             string[] chain1340 = new string[] { "1340" };
             string[] chain88 = new string[] { "2200", "1965", "2718", "625", "116", "968", "589", "419", "245", "1097", "2575", "9034", "9010" };
             string[] chain102 = new string[] { "2369", "2470", "2716", "236", "2534", "2762", "233", "8023", "8007", "8008", "8009", "9008", "9044" };
@@ -188,7 +235,7 @@ namespace Planirovanie
             foreach (var user in chain88)
             {
                 method.LoginStada(test, "user_" + user, "1");
-               Console.WriteLine("User_" + user + ":");
+                Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
                 method.ChainsAccept();   // Добавить в метод - ПРОВЕРКУ ИЗМЕНЕННИЯ КНОПКИ с "Утвердить" на "Утверждён"
                 method.LogoutStada(logoutTest);

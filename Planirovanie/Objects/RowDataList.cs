@@ -6,15 +6,39 @@ using System.Threading.Tasks;
 
 namespace Planirovanie
 {
-   public class RowDataList : List<RowData>
+    public class RowDataList : List<RowData>
     {
-        public List<string> GetUniqueWebNames(int[]months)
+        public List<string> GetUniqueWebNames(int[] months)
         {
             //return this.Select(r => r.WebName).Distinct().ToList();
             return (from r in this
                     where r.Group != "не планируем в Планировщике" && months.Contains(r.Month)
                     select r.WebName).Distinct().ToList();
         }
+        public List<string> GetUniqueNames()
+        {
+            //return this.Select(r => r.WebName).Distinct().ToList();
+            return (from r in this
+                    select r.Name).Distinct().ToList();
+        }
+
+        public List<RowData> GetDistinctListFromSpravochnik(int[] months)
+        {
+            return this.GroupBy(r => new { r.IdPrUniq, r.Name, r.Segment, r.Id_BU, r.Group })
+                 .Select(g => g.First())
+                 .ToList();
+        }
+
+
+
+
+        public static List<RowData> ConvertSpravochikList(int[] months, RowDataList spravochnik)
+        {
+            var clearedList = spravochnik.Select(r => new RowData { IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq, Name = r.Segment == 2 ? r.WebName : r.Name, Segment = r.Segment, Id_BU = r.Id_BU, Group = r.Group, Month = r.Month}).Where(r=> r.Group != "не планируем в Планировщике" && months.Contains(r.Month) )
+                .Distinct().ToList();
+            return clearedList;
+        }
+
         public int GetTotalSumPcsById(int id, int[] months)
         {
             return (from r in this
@@ -27,15 +51,10 @@ namespace Planirovanie
                     where r.IdPrUniq == id && months.Contains(r.Month)
                     select r.Summa).Sum();
         }
-        public List<string> GetUniqueNames()
-        {
-            //return this.Select(r => r.WebName).Distinct().ToList();
-            return (from r in this
-                    select r.Name).Distinct().ToList();
-        }
+
 
         public List<int> GetIdListByUser(int user)
-       {
+        {
             return (from r in this
                     where r.IdSotr == user
                     select r.IdPrUniq).Distinct().ToList();
@@ -51,7 +70,7 @@ namespace Planirovanie
         public List<int> GetIdList()
         {
             return (from r in this
-                   select r.IdPrUniq).ToList();
+                    select r.IdPrUniq).ToList();
         }
 
         public static List<string> CompareStrings(List<string> list1, List<string> list2)
@@ -63,7 +82,7 @@ namespace Planirovanie
         }
         public static List<int> CompareNumbers(List<int> list1, List<int> list2)
         {
-           
+
             return (from s in list1
                     where !list2.Contains(s)
                     select s).ToList();
@@ -71,11 +90,11 @@ namespace Planirovanie
 
 
         public List<RowData> GetListObjectsById(int id)
-       {
-           return (from r in this
-               where r.IdPrUniq == id
-               select r).ToList();
-       }
+        {
+            return (from r in this
+                    where r.IdPrUniq == id
+                    select r).ToList();
+        }
         public int GetSumPcsByIdAndMonth(int id, int month)
         {
             return (from r in this
@@ -88,22 +107,22 @@ namespace Planirovanie
                     where r.IdPrUniq == id && r.Month == month && r.Segment == segment
                     select r.Upakovki).Sum();
         }
-       
 
-        
+
+
         public int GetSumByChoosenMonth(int month)
-       {
-           return (from r in this
-               where r.Month == month
-               select r.Upakovki).Sum();
-       }
+        {
+            return (from r in this
+                    where r.Month == month
+                    select r.Upakovki).Sum();
+        }
 
-       public int GetUpakovkiById(int id)
-       {
-           return (from r in this
-               where r.IdPrUniq == id
-               select r.Upakovki).Sum();
-       }
+        public int GetUpakovkiById(int id)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id
+                    select r.Upakovki).Sum();
+        }
         public int GetUpakovkiConcurentById(int id)
         {
             return (from r in this
@@ -113,11 +132,11 @@ namespace Planirovanie
 
 
         public List<string> GetNamesList()
-       {
-            return (from row in this 
+        {
+            return (from row in this
                     select row.Name).ToList();
-           
-       }
+
+        }
 
         public List<string> GetWebNamesList()
         {
