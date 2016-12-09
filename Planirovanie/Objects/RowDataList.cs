@@ -22,21 +22,26 @@ namespace Planirovanie
                     select r.Name).Distinct().ToList();
         }
 
-        public List<RowData> GetDistinctListFromSpravochnik(int[] months)
-        {
-            return this.GroupBy(r => new { r.IdPrUniq, r.Name, r.Segment, r.Id_BU, r.Group })
-                 .Select(g => g.First())
-                 .ToList();
-        }
-
-
-
-
+       
         public static List<RowData> ConvertSpravochikList(int[] months, RowDataList spravochnik)
         {
-            var clearedList = spravochnik.Select(r => new RowData { IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq, Name = r.Segment == 2 ? r.WebName : r.Name, Segment = r.Segment, Id_BU = r.Id_BU, Group = r.Group, Month = r.Month}).Where(r=> r.Group != "не планируем в Планировщике" && months.Contains(r.Month) )
+            var clearedList = spravochnik.Select(r => new RowData { IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq, Name = r.Segment == 2 ? r.WebName : r.Name, Segment = r.Segment, Id_BU = r.Id_BU, Group = r.Group, Month = r.Month}).Where(r=> r.Group != "не планируем в Планировщике" && months.Contains(r.Month))
                 .Distinct().ToList();
-            return clearedList;
+            var finalList = clearedList.GroupBy(r => new { r.IdPrUniq, r.Name, r.Segment, r.Id_BU, r.Group })
+                 .Select(g => g.First())
+                 .ToList();
+
+            return finalList;
+        }
+
+        public static List<RowData> CompareRowDataObjects(List<RowData> list1, List<RowData> list2)
+        {
+
+            return (from l1 in list1
+                    where !list2.Any(l1.IsEqual)
+                    select l1).ToList();
+
+            //list1.Where (r => !list2.Any (t => t.IsEqual( r ) ) )
         }
 
         public int GetTotalSumPcsById(int id, int[] months)
@@ -62,9 +67,11 @@ namespace Planirovanie
 
         public List<int> GetIdListByUserWithoutAutoplan(int user)
         {
-            return (from r in this
+
+           
+            return   (from r in this
                     where r.IdSotr == user && r.Group != "2 группа (автопланирование)"
-                    select r.IdPrUniq).Distinct().ToList();
+                      select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
         }
 
         public List<int> GetIdList()

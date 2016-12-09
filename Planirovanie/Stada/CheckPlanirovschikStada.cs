@@ -45,37 +45,22 @@ namespace Planirovanie
             firefox.Quit();
         }
         [Test]
-        public void CheckPreparationsName2()
+        public void CheckPreparationsNameWithAdditionalInformation()
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
-            Debug.WriteLine("Excel was stored");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.16custom_.xlsx");
+            Console.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
-            Debug.WriteLine("Planirovschik was stored");
-            Debug.WriteLine("Данные есть в справочинке, но отсутсвуют в планировщике планировщиком");
-            method.CompareExcelWithWeb(months); //STADA
-            Debug.WriteLine("Данные есть в планировщике, но отсутствуют в справочнике");
-            method.CompareWebWithExcel(months);//STADA
+            Console.WriteLine("Planirovschik was stored");
+            method.ComparePreparationNameThroughObjects(months);
 
             firefox.Quit();
         }
 
-        [Test]
-        public void TestName()
-        {
-            var firefox = new FirefoxDriver();
-            var method = new Methods(firefox);
-            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
-            Debug.WriteLine("Excel was stored");
-            method.TestName2(months);
-           firefox.Quit();
-        }
 
         [Test]
         public void CheckPreparationsData()
@@ -84,7 +69,7 @@ namespace Planirovanie
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.16custom_.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.CheckPreparationData(months);
@@ -98,9 +83,11 @@ namespace Planirovanie
             var method = new Methods(firefox);
 
 
-            int[] chainPM = { 58, 754, 1167, 1174, 1598, 1638, 1901, 1965, 2071, 2113, 2128, 2195, 2200, 2205, 2206, 2212, 2494, 2708, 2711, 2718, 2849 };
+            /* int[] chainPM = { 58, 754, 1167, 1174, 1598, 1638, 1901, 1965, 2071, 2113, 2128, 2195, 2200, 2205, 2206, 2212, 2494, 2708, 2711, 2718, 2849, 2859 };*/
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
+            int[] chainPM = { 8003, 754, 8061, 1174, 1598, 1638, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 2206, 2212, 2494, 2708, 2711, 2718, 2849, 2859 };
+
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.16custom_.xlsx");
             foreach (var user in chainPM)
             {
 

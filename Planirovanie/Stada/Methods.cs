@@ -169,19 +169,38 @@ namespace Planirovanie
             }
         }
 
-        public void TestName2(int[] months)
+       public void ComparePreparationNameThroughObjects(int[] months)
         {
-            var test = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
+            var convertSpravochnik = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
+            
 
-            for (int i = 0; i < 400;  i++)
+            var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, preparationNamePlanirovschik);
+            if (diff1.Count != 0)
             {
-             Console.WriteLine(test[i].IdPrUniq + " / " + test[i].Name + " / segment - " + test[i].Segment + " / group -  " + test[i].Group  );   
+                Console.WriteLine("Данные из справочника отсутствуют в планировщике:");
+                foreach (var d in diff1)
+                {
+                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + "; Segment - "  + d.Segment + "; Group - " + d.Group + ")");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Сверка справочника с планировщиком. Расхождений нет");
+            }
+            var diff2 = RowDataList.CompareRowDataObjects(preparationNamePlanirovschik, convertSpravochnik);
+            if (diff2.Count != 0)
+            {
+                Console.WriteLine("Данные из планировщика отсутствуют в справочнике:");
+                foreach (var d in diff2)
+                {
+                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + ")");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Сверка планировщика со справочником. Расхождений нет");
             }
 
-           /* foreach (var t in test)
-            {
-            Console.WriteLine(t.IdPrUniq + " / " + t.Name + " / segment - " + t.Segment + " / group -  " + t.Group);
-            }*/
         }
 
         public void CompareWebWithExcel(int[] months)
@@ -399,7 +418,7 @@ namespace Planirovanie
                     Console.WriteLine(d);
                 }
             }
-            Console.WriteLine("Проверено");
+            Console.WriteLine("User - " + user + ". Проверен.");
         }
 
         public void GetListPreparationFromExcelForUser(int user)
