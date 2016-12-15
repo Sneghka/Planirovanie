@@ -34,6 +34,21 @@ namespace Planirovanie
             return finalList;
         }
 
+        public static List<RowData> GetPreparationWithAutoPlanFromSpravochnik(List<RowData> spravochnik)
+        {
+           return (from l in spravochnik
+                    where l.Group == "2 группа (автопланирование)"
+                    select l).ToList();
+
+        }
+        public static List<RowData> GetPreparationWithAutoPlanFromPlanirovschik(RowDataList planirovschik)
+        {
+            return (from l in planirovschik
+                    where l.Status == "false"
+                    select l).ToList();
+
+        }
+
         public static List<RowData> CompareRowDataObjects(List<RowData> list1, List<RowData> list2)
         {
 

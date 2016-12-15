@@ -84,7 +84,36 @@ namespace Planirovanie
             }
         }
 
-        public void StoreExcelDataAny(string path) //@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
+        public void StoreExcelDataBuTerritorii(string path) //@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
+        {
+            DataTable dt = new DataTable();
+            WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
+                "Select * from [zone_of_resp$]");
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row[0] == DBNull.Value) continue;
+              
+                var rowData = new RowData
+                {
+                    Id_BU = Convert.ToInt32(row["BUID"]),
+                    DistrictName3 = row["District.Name3"].ToString(),
+                    IdSotr = Convert.ToInt32(row["id_Sotr"]),
+                    FIO = row["Full_name"].ToString(),
+                    Position = row["Position"].ToString()
+                    };
+                preparationDataSpravochnik.Add(rowData);
+            }
+        }
+
+        public void StoreHtmlData()
+        {
+            var allBU = "http://test.stada.bi.morion.ua/utils/test/mrs.php?fun=get_persons&format=html";
+            var BU32 = "http://test.stada.bi.morion.ua/utils/test/mrs.php?fun=get_persons&format=html&bunit_id=32";
+
+
+        }
+
+        public void StoreExcelDataAny(string path)//@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
@@ -103,6 +132,7 @@ namespace Planirovanie
                 };
                 preparationDataSpravochnik.Add(rowData);
             }
+
         }
 
         public void LoginStada(string url, string login, string password)
@@ -149,13 +179,15 @@ namespace Planirovanie
                         .Text.Trim()
                         .Replace("\u00A0", " ")
                         .ToLower();
+               
                 var rowData = new RowData()
                 {
                     IdPrUniq = Convert.ToInt32(tableRows[i - 1].GetAttribute("data_id")), // add preparation id
                     Id_BU = Convert.ToInt32(tableRows[i - 1].GetAttribute("bu_id")), // add preparation bu_id
-                    Name = Regex.Replace(name, @"\s+", " ") // add preparation name
+                    Name = Regex.Replace(name, @"\s+", " "), // add preparation name
+                    Status = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[3]")).GetAttribute("aria-disabled")
 
-                };
+            };
                 preparationNamePlanirovschik.Add(rowData);
             }
         }
@@ -172,9 +204,9 @@ namespace Planirovanie
        public void ComparePreparationNameThroughObjects(int[] months)
         {
             var convertSpravochnik = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
-            
-
-            var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, preparationNamePlanirovschik);
+            Console.WriteLine("СПРАВОЧНИК");
+         
+           var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, preparationNamePlanirovschik);
             if (diff1.Count != 0)
             {
                 Console.WriteLine("Данные из справочника отсутствуют в планировщике:");
@@ -201,6 +233,41 @@ namespace Planirovanie
                 Console.WriteLine("Сверка планировщика со справочником. Расхождений нет");
             }
 
+        }
+
+        public void ComparePreparationWithAutoPlan(int[] months)
+        {
+            var convertSpravochnik = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
+            var convertSpravochnikWithAutoplanOnly = RowDataList.GetPreparationWithAutoPlanFromSpravochnik(convertSpravochnik);
+            var planirovschikWithAutoplanOlny = RowDataList.GetPreparationWithAutoPlanFromPlanirovschik(preparationNamePlanirovschik);
+
+          
+            var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnikWithAutoplanOnly, planirovschikWithAutoplanOlny);
+            if (diff1.Count != 0)
+            {
+                Console.WriteLine("Данные из справочника отсутствуют в планировщике:");
+                foreach (var d in diff1)
+                {
+                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + "; Segment - " + d.Segment + "; Group - " + d.Group + ")");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Сверка справочника с планировщиком. Расхождений нет");
+            }
+            var diff2 = RowDataList.CompareRowDataObjects(planirovschikWithAutoplanOlny, convertSpravochnikWithAutoplanOnly);
+            if (diff2.Count != 0)
+            {
+                Console.WriteLine("Данные из планировщика отсутствуют в справочнике:");
+                foreach (var d in diff2)
+                {
+                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + ")");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Сверка планировщика со справочником. Расхождений нет");
+            }
         }
 
         public void CompareWebWithExcel(int[] months)

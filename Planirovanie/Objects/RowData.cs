@@ -21,6 +21,10 @@ namespace Planirovanie
         public decimal Summa { get; set; }
         public string Group { get; set; }
         public int UpakovkiConcurent { get; set; }
+        public string Status { get; set; }
+        public string DistrictName3 { get; set; }
+        public string Position { get; set; }
+
 
         public string WebName
         {
