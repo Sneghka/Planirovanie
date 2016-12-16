@@ -105,15 +105,7 @@ namespace Planirovanie
             }
         }
 
-        public void StoreHtmlData()
-        {
-            var allBU = "http://test.stada.bi.morion.ua/utils/test/mrs.php?fun=get_persons&format=html";
-            var BU32 = "http://test.stada.bi.morion.ua/utils/test/mrs.php?fun=get_persons&format=html&bunit_id=32";
-
-
-        }
-
-        public void StoreExcelDataAny(string path)//@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
+       public void StoreExcelDataAny(string path)//@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
@@ -1235,7 +1227,7 @@ namespace Planirovanie
                 var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
                 var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[2]")).Text;
                 var preparationBu = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
-                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[5]/input[1]";
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
                 var raschetButton = _firefox.FindElement(By.XPath(raschetButtonXPath));
                 var raschetButtonPlanStatus = raschetButton.GetAttribute("plan_status");
 
@@ -1254,7 +1246,18 @@ namespace Planirovanie
                 Thread.Sleep(1500);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(raschetButtonXPath)));
                 Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
-                wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.SavePlanButtonXPath)));
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SavePlanButtonXPath)));
+                if (_firefox.FindElement(By.XPath(".//*[@id='save_plan_customer']")).GetAttribute("aria-disabled") ==
+                    "true")
+                {
+                    Console.WriteLine("№" + i + " " + preparationName + " - препарат НЕ утверждён. Кнопка 'Сохранить план' неактивна");
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
+                    Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
+                    wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));
+                    continue;
+                }
+
                 Helper.TryToClickWithoutException(PageElements.SavePlanButtonXPath, _firefox);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AcceptButtonXpath)));
                 Helper.TryToClickWithoutException(PageElements.AcceptButtonXpath, _firefox);
