@@ -92,7 +92,7 @@ namespace Planirovanie
             foreach (DataRow row in dt.Rows)
             {
                 if (row[0] == DBNull.Value) continue;
-              
+
                 var rowData = new RowData
                 {
                     Id_BU = Convert.ToInt32(row["BUID"]),
@@ -100,12 +100,12 @@ namespace Planirovanie
                     IdSotr = Convert.ToInt32(row["id_Sotr"]),
                     FIO = row["Full_name"].ToString(),
                     Position = row["Position"].ToString()
-                    };
+                };
                 preparationDataSpravochnik.Add(rowData);
             }
         }
 
-       public void StoreExcelDataAny(string path)//@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
+        public void StoreExcelDataAny(string path)//@"D:\Sneghka\Selenium\Projects\Planirovschik\FitoPharm.xlsx"
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
@@ -137,7 +137,7 @@ namespace Planirovanie
             pageElements.LoginField.SendKeys(login);
             pageElements.PasswordField.SendKeys(password);
             pageElements.SubmitButton.Click();
-          /* wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));*/
+            /* wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));*/
             Thread.Sleep(5000);
         }
 
@@ -171,7 +171,7 @@ namespace Planirovanie
                         .Text.Trim()
                         .Replace("\u00A0", " ")
                         .ToLower();
-               
+
                 var rowData = new RowData()
                 {
                     IdPrUniq = Convert.ToInt32(tableRows[i - 1].GetAttribute("data_id")), // add preparation id
@@ -179,7 +179,7 @@ namespace Planirovanie
                     Name = Regex.Replace(name, @"\s+", " "), // add preparation name
                     Status = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[3]")).GetAttribute("aria-disabled")
 
-            };
+                };
                 preparationNamePlanirovschik.Add(rowData);
             }
         }
@@ -193,18 +193,18 @@ namespace Planirovanie
             }
         }
 
-       public void ComparePreparationNameThroughObjects(int[] months)
+        public void ComparePreparationNameThroughObjects(int[] months)
         {
             var convertSpravochnik = RowDataList.ConvertSpravochikList(months, preparationDataSpravochnik);
             Console.WriteLine("СПРАВОЧНИК");
-         
-           var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, preparationNamePlanirovschik);
+
+            var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, preparationNamePlanirovschik);
             if (diff1.Count != 0)
             {
                 Console.WriteLine("Данные из справочника отсутствуют в планировщике:");
                 foreach (var d in diff1)
                 {
-                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + "; Segment - "  + d.Segment + "; Group - " + d.Group + ")");
+                    Console.WriteLine(d.IdPrUniq + " " + d.Name + " (BU_ID - " + d.Id_BU + "; Segment - " + d.Segment + "; Group - " + d.Group + ")");
                 }
             }
             else
@@ -233,7 +233,7 @@ namespace Planirovanie
             var convertSpravochnikWithAutoplanOnly = RowDataList.GetPreparationWithAutoPlanFromSpravochnik(convertSpravochnik);
             var planirovschikWithAutoplanOlny = RowDataList.GetPreparationWithAutoPlanFromPlanirovschik(preparationNamePlanirovschik);
 
-          
+
             var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnikWithAutoplanOnly, planirovschikWithAutoplanOlny);
             if (diff1.Count != 0)
             {
@@ -264,7 +264,7 @@ namespace Planirovanie
 
         public void CompareWebWithExcel(int[] months)
         {
-            var difference = RowDataList.CompareStrings(preparationNamePlanirovschik.GetNamesList(),preparationDataSpravochnik.GetUniqueWebNames(months));
+            var difference = RowDataList.CompareStrings(preparationNamePlanirovschik.GetNamesList(), preparationDataSpravochnik.GetUniqueWebNames(months));
             if (difference.Count == 0)
             {
                 Debug.WriteLine("Расхождений нет");
@@ -280,8 +280,8 @@ namespace Planirovanie
 
         public void CompareExcelWithWeb(int[] months)
         {
-            var difference = RowDataList.CompareStrings(preparationDataSpravochnik.GetUniqueWebNames(months),preparationNamePlanirovschik.GetNamesList());
-         
+            var difference = RowDataList.CompareStrings(preparationDataSpravochnik.GetUniqueWebNames(months), preparationNamePlanirovschik.GetNamesList());
+
 
             Debug.WriteLine(difference.Count + "Count");
             if (difference.Count == 0)
@@ -321,13 +321,13 @@ namespace Planirovanie
                 Console.WriteLine("Total sum: справочник " + preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) + " НЕ РАВНО !!!! " + totalSum + " планировщик");
             }
 
-            if (preparationDataSpravochnik.GetTotalSumPcsById(preparationId, months) == totalPcs)
+            if (preparationDataSpravochnik.GetTotalPcsById(preparationId, months) == totalPcs)
             {
-                Console.WriteLine("Total pcs: справочник " + preparationDataSpravochnik.GetTotalSumPcsById(preparationId, months) + " = " + totalPcs + " планировщик");
+                Console.WriteLine("Total pcs: справочник " + preparationDataSpravochnik.GetTotalPcsById(preparationId, months) + " = " + totalPcs + " планировщик");
             }
             else
             {
-                Console.WriteLine("Total pcs: справочник " + preparationDataSpravochnik.GetTotalSumPcsById(preparationId, months) + " НЕ РАВНО!!! " + totalPcs + " планировщик");
+                Console.WriteLine("Total pcs: справочник " + preparationDataSpravochnik.GetTotalPcsById(preparationId, months) + " НЕ РАВНО!!! " + totalPcs + " планировщик");
             }
         }
 
@@ -416,7 +416,255 @@ namespace Planirovanie
                         MessageCheckPreparationMethodByMonth(kvp.Key, preparationDataSpravochnik.GetSumPcsByIdAndMonth(preparationId, kvp.Key), kvp.Value);
                     }
                 }
+
+                Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
+                Thread.Sleep(500);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.FindPreparationInputFieldXPath)));
+
+            } //конец цикла FOR перебора всех препаратов
+
+        } //конец метода
+
+        public void CheckPreparationDataByQrt(int[] months)
+        {
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(2000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));
+            numberTableRows = tableRows.Count;
+            Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
+
+            for (int i = 1; i <= numberTableRows; i++)
+            {
+                Console.WriteLine("№" + i);
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationBuId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+                Thread.Sleep(1000);
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine("Кнопка расчёт неактивна - " + preparationName);
+                    continue;
+                }
+
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
+                Thread.Sleep(2000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TotalPcsXPath)));
+
+                if (preparationId < 0) // проверяем является ли препарат льготным
+                {
+                    Console.WriteLine(preparationId + " " + preparationName + " (BU" + preparationBuId + "): ");
+                    preparationId *= -1;
+
+                    var totalSumString = _firefox.FindElement(By.XPath(" .//*[@id='sumEuro2']"));
+
+                    var totalPcsQrtLgota = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='sumPOPPVP2']")).Text.Replace(" ", ""));
+                    decimal totalSumQrtLgota;
+                    if (totalSumString.Text == "0")
+                    {
+                        totalSumQrtLgota = 0;
+                    }
+                    else
+                    {
+                        totalSumQrtLgota = Convert.ToDecimal(totalSumString.Text.Substring(0, totalSumString.Text.Length - 5).Replace(" ", "").Replace(".", ","));
+                    }
+                    var totalSumSpravochnik = preparationDataSpravochnik.GetTotalSumRubById(preparationId, months);
+                    var totalPcsSpravochnik = preparationDataSpravochnik.GetTotalPcsById(preparationId, months);
+
+                    if (totalSumQrtLgota - totalSumSpravochnik < 10 && totalSumQrtLgota - totalSumSpravochnik > -10)
+                    {
+                        Console.WriteLine(totalSumQrtLgota + " = " + totalSumSpravochnik + " (сумма за 1-ый квартал)");
+                        Console.WriteLine("разница - " + (totalSumQrtLgota - totalSumSpravochnik));
+                    }
+                    else
+                    {
+                        Console.WriteLine(totalSumQrtLgota + " НЕ РАВНО!!!! " + totalSumSpravochnik + " (сумма за 1-ый квартал)");
+                        Console.WriteLine("разница - " + (totalSumQrtLgota - totalSumSpravochnik));
+                    }
+                    if (totalPcsQrtLgota != totalPcsSpravochnik)
+                    {
+                        Console.WriteLine(totalPcsQrtLgota + " НЕ РАВНО!!!! " + totalPcsSpravochnik + " (сумма за 1-ый квартал)");
+                    }
+                    else
+                    {
+                        Console.WriteLine(totalPcsQrtLgota + " = " + totalPcsSpravochnik + " (сумма за 1-ый квартал)");
+                        Console.WriteLine(" ");
+                    }
+
+                    Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
+                    Thread.Sleep(500);
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.FindPreparationInputFieldXPath)));
+                    continue;
+                }
+                if (preparationId > 0)
+                {
+                    Console.WriteLine(preparationId + " " + preparationName + " (BU" + preparationBuId + "): ");
+
+                    var totalSumString = _firefox.FindElement(By.XPath(" .//*[@id='sumEuro2']"));
+
+                    var totalPcsQrtLgota = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='sumPOPPVP2']")).Text.Replace(" ", ""));
+
+                    decimal totalSumQrtLgota;
+                    if (totalSumString.Text == "0")
+                    {
+                        totalSumQrtLgota = 0;
+                    }
+                    else
+                    {
+                        totalSumQrtLgota = Convert.ToDecimal(totalSumString.Text.Substring(0, totalSumString.Text.Length - 5).Replace(" ", "").Replace(".", ","));
+                    }
+
+
+
+                    var totalSumSpravochnik = preparationDataSpravochnik.GetTotalSumRubById(preparationId, months);
+                    var totalPcsSpravochnik = preparationDataSpravochnik.GetTotalPcsById(preparationId, months);
+
+                    if (totalSumQrtLgota - totalSumSpravochnik < 10 && totalSumQrtLgota - totalSumSpravochnik > -10)
+                    {
+                        Console.WriteLine(totalSumQrtLgota + " = " + totalSumSpravochnik + " (сумма за 1-ый квартал)");
+                        Console.WriteLine("разница - " + (totalSumQrtLgota - totalSumSpravochnik));
+                    }
+                    else
+                    {
+                        Console.WriteLine(totalSumQrtLgota + " НЕ РАВНО!!!! " + totalSumSpravochnik + " (сумма за 1-ый квартал)");
+                        Console.WriteLine("разница - " + (totalSumQrtLgota - totalSumSpravochnik));
+
+                    }
+                    if (totalPcsQrtLgota != totalPcsSpravochnik)
+                    {
+                        Console.WriteLine(totalPcsQrtLgota + " НЕ РАВНО!!!! " + totalPcsSpravochnik + " (кол-во за 1-ый квартал)");
+                    }
+                    else
+                    {
+                        Console.WriteLine(totalPcsQrtLgota + " = " + totalPcsSpravochnik + " (кол-во за 1-ый квартал)");
+                    }
+
+                    Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
+                    Thread.Sleep(500);
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.FindPreparationInputFieldXPath)));
+
+                } //конец цикла FOR перебора всех препаратов
+
+            }
+        } //конец метода
+
+        public void CheckPreparationDataByUserGlobal(int[] months, int userId) //проверка год + квартал
+        {
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(2000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));// get list of preparation
+            numberTableRows = tableRows.Count;
+            Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
+
+            for (int i = 1; i <= numberTableRows; i++)
+            {
+                Console.WriteLine("№" + i);
+                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationBuId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
+                var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+                Thread.Sleep(1000);
+                Console.WriteLine(preparationId + " " + preparationName + " (BU" + preparationBuId + "): ");
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine("Кнопка расчёт неактивна .");
+                    continue;
+                }
+
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
+                Thread.Sleep(2000);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TotalPcsXPath)));
+
+                if (preparationId < 0) // проверяем является ли препарат льготным
+                {
+                    preparationId *= -1;
+                }
+                decimal totalSumYearPlanirovshik;
+
+                var totalPcsYearPlanirovshik = Convert.ToInt32(pageElements.TotalPcs.Text.Replace(" ", ""));
+                if (pageElements.TotalSumRub.Text == "0")
+                {
+                    totalSumYearPlanirovshik = 0;
+                }
+                else
+                {
+                    totalSumYearPlanirovshik = Convert.ToDecimal(pageElements.TotalSumRub.Text.Substring(0, pageElements.TotalSumRub.Text.Length - 5).Replace(" ", "").Replace(".", ","));
+                }
+
+                var totalSumStringQrtPlanirovshik = _firefox.FindElement(By.XPath(" .//*[@id='sumEuro2']"));
+                var totalPcsQrtPlanirovshik = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='sumPOPPVP2']")).Text.Replace(" ", ""));
+
+                decimal totalSumQrtPlanirovschik;
+                if (totalSumStringQrtPlanirovshik.Text == "0")
+                {
+                    totalSumQrtPlanirovschik = 0;
+                }
+                else
+                {
+                    totalSumQrtPlanirovschik = Convert.ToDecimal(totalSumStringQrtPlanirovshik.Text.Substring(0, totalSumStringQrtPlanirovshik.Text.Length - 5).Replace(" ", "").Replace(".", ","));
+                }
+
+                var totalSumSpravochnikQrt = preparationDataSpravochnik.GetTotalSumRubByIdAndUserAndMonths(preparationId, months, userId);
+                var totalPcsSpravochnikQrt = preparationDataSpravochnik.GetTotalPcsByIdAndUserAndMonths(preparationId, months, userId);
+                var totalSumSpravochnikYear = preparationDataSpravochnik.GetTotalSumByIdAndUser(preparationId, userId);
+                var totalPcsSpravochnikYear = preparationDataSpravochnik.GetTotalPcsByIdAndUser(preparationId, userId);
+
+                //Сверка суммы руб. за год
+                if (totalSumYearPlanirovshik - totalSumSpravochnikYear < 10 && totalSumYearPlanirovshik - totalSumSpravochnikYear > -10)
+                {
+                    Console.WriteLine(totalSumYearPlanirovshik + " = " + totalSumSpravochnikYear + " (сумма за год)");
+                }
+                else
+                {
+                    Console.WriteLine(totalSumYearPlanirovshik + " НЕ РАВНО!!!! " + totalSumSpravochnikYear + " (сумма за год)");
+                }
+                Console.WriteLine("разница - " + (totalSumYearPlanirovshik - totalSumSpravochnikYear));
+
+                //Сверка суммы руб. за квартал
+                if (totalSumQrtPlanirovschik - totalSumSpravochnikQrt < 10 && totalSumQrtPlanirovschik - totalSumSpravochnikQrt > -10)
+                {
+                    Console.WriteLine(totalSumQrtPlanirovschik + " = " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)");
+                   }
+                else
+                {
+                    Console.WriteLine(totalSumQrtPlanirovschik + " НЕ РАВНО!!!! " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)");
+                  }
+                Console.WriteLine("разница - " + (totalSumQrtPlanirovschik - totalSumSpravochnikQrt));
+
+                //Сверка упаковок за год
+                if (totalPcsYearPlanirovshik != totalPcsSpravochnikYear)
+                {
+                    Console.WriteLine(totalPcsYearPlanirovshik + " НЕ РАВНО!!!! " + totalPcsSpravochnikYear + " (упаковки за год)");
+                }
+                else
+                {
+                    Console.WriteLine(totalPcsYearPlanirovshik + " = " + totalPcsSpravochnikYear + " (упаковки за год)");
+                }
+
+                //Сверка упаковок за квартал
+                if (totalPcsQrtPlanirovshik != totalPcsSpravochnikQrt)
+                {
+                    Console.WriteLine(totalPcsQrtPlanirovshik + " НЕ РАВНО!!!! " + totalPcsSpravochnikQrt + " (упаковки за 1-ый квартал)");
+                }
+                else
+                {
+                    Console.WriteLine(totalPcsQrtPlanirovshik + " = " + totalPcsSpravochnikQrt + " (упаковки за 1-ый квартал)");
+                }
+
                
+
                 Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
                 Thread.Sleep(500);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.FindPreparationInputFieldXPath)));
@@ -484,7 +732,7 @@ namespace Planirovanie
         {
             var listPreparationIDSpravochnik = preparationDataSpravochnik.GetIdListByUserWithoutAutoplan(user);
 
-           Console.WriteLine("User_" + user + "Препараты отсутствуют в планировщике:");
+            Console.WriteLine("User_" + user + "Препараты отсутствуют в планировщике:");
             foreach (var preparation in listPreparationIDSpravochnik)
             {
                 Console.WriteLine(preparation);
@@ -1131,14 +1379,14 @@ namespace Planirovanie
             int i = 1;
             for (int a = 189; a < loginPasswordList.Count; a++)
             {
-               
+
                 pageElements.LoginField.Clear();
                 pageElements.PasswordField.Clear();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SubmitButtonXPath)));
                 pageElements.LoginField.SendKeys(loginPasswordList[a].Login);
                 pageElements.PasswordField.SendKeys(loginPasswordList[a].Password);
                 pageElements.SubmitButton.Click();
-               
+
                 Thread.Sleep(4000);
                 if (_firefox.FindElement(By.XPath(".//*[@id='dialog-confirm']")).GetAttribute("style") == "display: none;")
                 {
@@ -1215,10 +1463,10 @@ namespace Planirovanie
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var action = new Actions(_firefox);
             var pageElements = new PageElements(_firefox);
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr")); // get list of preparation
             numberTableRows = tableRows.Count;
-            Thread.Sleep(2000);
+            Thread.Sleep(3000);
             Debug.WriteLine(numberTableRows + " кол-во строк в таблице");
 
             for (int i = 1; i <= numberTableRows; i++)
@@ -1238,7 +1486,7 @@ namespace Planirovanie
                 }
                 if (raschetButtonPlanStatus != "")
                 {
-                    Console.WriteLine(preparationId + " " + preparationName + " - статус - " + raschetButtonPlanStatus);
+                    Console.WriteLine(preparationName + " - статус - " + raschetButtonPlanStatus);
                     continue;
                 }
 

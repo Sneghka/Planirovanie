@@ -99,9 +99,7 @@ namespace Planirovanie
 
         private string[] _PcsXPath =
        {
-            "",
-            ".//*[@id='tableres_customer']/tbody/tr[7]/td[12]",
-            ".//*[@id='tableres_customer']/tbody/tr[7]/td[13]",
+             "",
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[14]",
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[15]",
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[16]",
@@ -111,7 +109,9 @@ namespace Planirovanie
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[20]",
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[21]",
             ".//*[@id='tableres_customer']/tbody/tr[7]/td[22]",
-            ".//*[@id='tableres_customer']/tbody/tr[7]/td[23]"
+            ".//*[@id='tableres_customer']/tbody/tr[7]/td[23]",
+            ".//*[@id='tableres_customer']/tbody/tr[7]/td[24]",
+            ".//*[@id='tableres_customer']/tbody/tr[7]/td[25]"
         };
 
         public IWebElement GetPcsMonth(int n)
@@ -186,8 +186,6 @@ namespace Planirovanie
         private string[] _PcsLgotaXPath =
         {
             "",
-            ".//*[@id='tableres_customer']/tbody/tr[10]/td[12]",
-            ".//*[@id='tableres_customer']/tbody/tr[10]/td[13]",
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[14]",
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[15]",
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[16]",
@@ -197,7 +195,9 @@ namespace Planirovanie
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[20]",
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[21]",
             ".//*[@id='tableres_customer']/tbody/tr[10]/td[22]",
-            ".//*[@id='tableres_customer']/tbody/tr[10]/td[23]"
+            ".//*[@id='tableres_customer']/tbody/tr[10]/td[23]",
+            ".//*[@id='tableres_customer']/tbody/tr[10]/td[24]",
+            ".//*[@id='tableres_customer']/tbody/tr[10]/td[25]"
         };
 
         public IWebElement GetPcsLgotaMonth(int n)

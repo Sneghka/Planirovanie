@@ -59,12 +59,34 @@ namespace Planirovanie
             //list1.Where (r => !list2.Any (t => t.IsEqual( r ) ) )
         }
 
-        public int GetTotalSumPcsById(int id, int[] months)
+        public int GetTotalPcsById(int id, int[] months)
         {
             return (from r in this
                     where r.IdPrUniq == id && months.Contains(r.Month)
                     select r.Upakovki).Sum();
         }
+
+        public int GetTotalPcsByIdAndUserAndMonths(int idPreparation, int[] months, int idSotr)
+        {
+            return (from r in this
+                    where r.IdPrUniq == idPreparation && months.Contains(r.Month) && r.IdSotr == idSotr
+                    select r.Upakovki).Sum();
+        }
+
+        public int GetTotalPcsByIdAndUser(int idPreparation, int userId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == idPreparation && r.IdSotr == userId
+                    select r.Upakovki).Sum();
+        }
+
+        public decimal GetTotalSumByIdAndUser(int idPreparation, int userId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == idPreparation && r.IdSotr == userId
+                    select r.Summa).Sum();
+        }
+
         public decimal GetTotalSumRubById(int id, int[] months)
         {
             return (from r in this
@@ -72,6 +94,12 @@ namespace Planirovanie
                     select r.Summa).Sum();
         }
 
+        public decimal GetTotalSumRubByIdAndUserAndMonths(int id, int[] months, int idSotr)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && months.Contains(r.Month) && r.IdSotr == idSotr
+                    select r.Summa).Sum();
+        }
 
         public List<int> GetIdListByUser(int user)
         {
