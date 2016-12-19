@@ -566,17 +566,14 @@ namespace Planirovanie
 
             for (int i = 1; i <= numberTableRows; i++)
             {
-                Console.WriteLine("№" + i);
-                var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+               var preparationId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
                 var preparationBuId = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("bu_id"));
                 var preparationName = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
                 var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
-                var raschetButton = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
-                Thread.Sleep(1000);
-                Console.WriteLine(preparationId + " " + preparationName + " (BU" + preparationBuId + "): ");
+                var raschetButton = _firefox.FindElement(By.XPath(raschetButtonXPath));
+                Console.WriteLine("№" + i + ". " + preparationId + " " + preparationName + " (BU" + preparationBuId + "): ");
 
-                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
-                {
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))                {
                     Console.WriteLine("Кнопка расчёт неактивна .");
                     continue;
                 }
@@ -586,6 +583,7 @@ namespace Planirovanie
                 Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
                 Thread.Sleep(2000);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TotalPcsXPath)));
+                Thread.Sleep(2000);
 
                 if (preparationId < 0) // проверяем является ли препарат льготным
                 {
@@ -624,24 +622,24 @@ namespace Planirovanie
                 //Сверка суммы руб. за год
                 if (totalSumYearPlanirovshik - totalSumSpravochnikYear < 10 && totalSumYearPlanirovshik - totalSumSpravochnikYear > -10)
                 {
-                    Console.WriteLine(totalSumYearPlanirovshik + " = " + totalSumSpravochnikYear + " (сумма за год)");
+                    Console.WriteLine(totalSumYearPlanirovshik + " = " + totalSumSpravochnikYear + " (сумма за год)" + " - " + "разница - " + (totalSumYearPlanirovshik - totalSumSpravochnikYear));
                 }
                 else
                 {
-                    Console.WriteLine(totalSumYearPlanirovshik + " НЕ РАВНО!!!! " + totalSumSpravochnikYear + " (сумма за год)");
+                    Console.WriteLine(totalSumYearPlanirovshik + " НЕ РАВНО!!!! " + totalSumSpravochnikYear + " (сумма за год)" + " - " + "разница - " + (totalSumYearPlanirovshik - totalSumSpravochnikYear));
                 }
-                Console.WriteLine("разница - " + (totalSumYearPlanirovshik - totalSumSpravochnikYear));
+               
 
                 //Сверка суммы руб. за квартал
                 if (totalSumQrtPlanirovschik - totalSumSpravochnikQrt < 10 && totalSumQrtPlanirovschik - totalSumSpravochnikQrt > -10)
                 {
-                    Console.WriteLine(totalSumQrtPlanirovschik + " = " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)");
+                    Console.WriteLine(totalSumQrtPlanirovschik + " = " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)" + " - " + "разница - " + (totalSumQrtPlanirovschik - totalSumSpravochnikQrt));
                    }
                 else
                 {
-                    Console.WriteLine(totalSumQrtPlanirovschik + " НЕ РАВНО!!!! " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)");
+                    Console.WriteLine(totalSumQrtPlanirovschik + " НЕ РАВНО!!!! " + totalSumSpravochnikQrt + " (сумма за 1-ый квартал)" + " - " + "разница - " + (totalSumQrtPlanirovschik - totalSumSpravochnikQrt));
                   }
-                Console.WriteLine("разница - " + (totalSumQrtPlanirovschik - totalSumSpravochnikQrt));
+                
 
                 //Сверка упаковок за год
                 if (totalPcsYearPlanirovshik != totalPcsSpravochnikYear)
@@ -663,7 +661,6 @@ namespace Planirovanie
                     Console.WriteLine(totalPcsQrtPlanirovshik + " = " + totalPcsSpravochnikQrt + " (упаковки за 1-ый квартал)");
                 }
 
-               
 
                 Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
                 Thread.Sleep(500);

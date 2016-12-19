@@ -113,10 +113,10 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3 };
-            method.StoreExcelData(@"D:\Sneghka\IT\Selenium\Planirovschik_file\1_для_модуля__Справочник3_14.12.16___custom_.xls");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник3_14.12.16___custom_.xls");
             Debug.WriteLine("Excel was stored");
             /* var users = new int[] {1340};*/
-            var users = new int[] { 2200, 1965, 2718 };
+            var users = new int[] { 2200, 1965, 2718, 2864, 1901, 2195, 2128, 2494, 8003, 2859, 2708, 1638, 1174, 2113, 2711, 8067, 2205, 1598, 2212, 754, 2849, 2861, 8061, 8012, 8013,  8071};//2494
 
 
             foreach (var user in users)

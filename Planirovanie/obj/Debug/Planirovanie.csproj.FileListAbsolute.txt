@@ -25,3 +25,10 @@ D:\Sneghka\IT\Morion\Projects\Planirovanie\Planirovanie\bin\Debug\nunit.framewor
 D:\Sneghka\IT\Morion\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csproj.ResolveComReference.cache
 D:\Sneghka\IT\Morion\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.dll
 D:\Sneghka\IT\Morion\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.pdb
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\bin\Debug\Planirovanie.dll
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\bin\Debug\Planirovanie.pdb
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\bin\Debug\nunit.framework.dll
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\bin\Debug\nunit.framework.xml
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csproj.ResolveComReference.cache
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.dll
+D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.pdb
