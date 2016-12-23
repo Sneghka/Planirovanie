@@ -19,7 +19,7 @@ namespace Planirovanie.EcxelObj
         /*const string path_file1 = @"D:\Sneghka\Selenium\Projects\Files\alg_new1.xlsx";
         const string path_file2 = @"D:\Sneghka\Selenium\Projects\Files\alg_old1.xlsx";*/
         [Test]
-        public void CompareFieldsInExlFiles()
+        public void CompareFieldsInExlFiles() // АстраЗенека
         {
             CompareXlsFilesMethods.StoreExcelDataFromFileXls_1(path_file1);
             Console.WriteLine("Store data from fist file");
@@ -27,7 +27,6 @@ namespace Planirovanie.EcxelObj
             Console.WriteLine("Store data from second file");
             CompareXlsFilesMethods.CompareAllFieldsById();
           
-
         }
     }
 }

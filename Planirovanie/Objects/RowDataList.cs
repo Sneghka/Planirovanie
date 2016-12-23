@@ -171,13 +171,40 @@ namespace Planirovanie
         {
             return (from r in this
                     where r.IdPrUniq == id
-                    select r.Upakovki).Sum();
+                    select r.Upakovki = r.Id_BU == 105 ? r.Upakovki/2 : r.Upakovki).Sum();
         }
+
+        public int GetUpakovkiByIdAndSalesType(int id, int salesType)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && r.SalesType == salesType
+                    select r.Upakovki = r.Id_BU == 105 ? r.Upakovki / 2 : r.Upakovki).Sum();
+        }
+        public int GetUpakovkiByIdAndTwoSalesType(int id, int salesType1, int salesType2)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && (r.SalesType == salesType1 || r.SalesType == salesType2) && r.AreaName.Contains("Россия")
+                    select r.Upakovki = r.Id_BU == 105 ? r.Upakovki / 2 : r.Upakovki).Sum();
+        }
+
         public int GetUpakovkiConcurentById(int id)
         {
             return (from r in this
                     where r.IdPrUniq == id
-                    select r.UpakovkiConcurent).Sum();
+                    select r.UpakovkiConcurent = r.Id_BU == 105 ? r.UpakovkiConcurent / 2 : r.UpakovkiConcurent).Sum();
+        }
+
+        public int GetUpakovkiConcurentByIdAndSalesType(int id, int salesType)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && r.SalesType == salesType
+                    select r.UpakovkiConcurent = r.Id_BU == 105 ? r.UpakovkiConcurent / 2 : r.UpakovkiConcurent).Sum();
+        }
+        public int GetUpakovkiConcurentByIdAndTwoSalesType(int id, int salesType1, int salesType2)
+        {
+            return (from r in this
+                    where r.IdPrUniq == id && (r.SalesType == salesType1 || r.SalesType == salesType2)&&r.AreaName.Contains("Россия")
+                    select r.UpakovkiConcurent = r.Id_BU == 105 ? r.UpakovkiConcurent / 2 : r.UpakovkiConcurent).Sum();
         }
 
 

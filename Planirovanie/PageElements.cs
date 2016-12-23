@@ -29,11 +29,11 @@ namespace Planirovanie
         public const string ChoosePreparationButtonXPath = ".//*[@id='load_sku_customer']";
         public const string FindPreparationInputFieldXPath = ".//*[@id='preparation_info_filter']/input";
         public const string SpravochyeDannyeButtonXPath = ".//*[@id='tabs']/ul/li[2]";
-        public const string SalesData2015Xpath = ".//*[@id='tab_info']/ul/li[1]";
-        public const string SalesData2016Xpath = ".//*[@id='tab_info']/ul/li[2]";
+        public const string SalesData2016Xpath = ".//*[@id='tab_info']/ul/li[1]";
+        public const string SalesData2017Xpath = ".//*[@id='tab_info']/ul/li[2]";
         public const string RaschetPlanaButtonXPath = ".//*[@id='tabs']/ul/li[1]/a";
-        public const string AuditDataOwn2015XPath = ".//*[@id='tab_info']/ul/li[3]";
-        public const string AuditDataCompetitor2015XPath = ".//*[@id='tab_info']/ul/li[5]";
+        public const string AuditDataOwn2016XPath = ".//*[@id='tab_info']/ul/li[3]";
+        public const string AuditDataCompetitor2016XPath = ".//*[@id='tab_info']/ul/li[5]";
         public const string SearchAreaNameAuditWebXPath = ".//*[@class='QvFrame Document_LB06']/div[2]/div[1]/div";
         public const string SearchPeriodAuditWebXPath = ".//*[@class='QvFrame Document_LB04']/div[2]/div[1]/div";
         public const string InputFieldAuditXPath = "html/body/div[2]/input";
@@ -41,11 +41,9 @@ namespace Planirovanie
         public const string GrSliderXPath = ".//*[@id='sliderGP']";
        
 
-        public const string Gr1340XPath =
-            ".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div";
+        public const string Gr1340XPath =".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div";
 
-        public const string AreaLevel_2AuditWebXPath =
-            ".//*[@class='QvFrame Document_LB02']/div[3]/div/div[1]/div[3]/div[1]";
+        public const string AreaLevel_2AuditWebXPath =".//*[@class='QvFrame Document_LB02']/div[3]/div/div[1]/div[3]/div[1]";
 
         public const string LockAuditWebXPath = ".//*[@id='QvAjaxToolbar']/ul[2]/li[13]/a";
         public const string SearchPreperationIdAuditWebXPath = ".//*[@class='QvFrame Document_LB03']/div[2]/div[1]/div";
@@ -366,24 +364,24 @@ namespace Planirovanie
             get { return _firefox.FindElement(By.XPath(".//*[@id='tabs']/ul/li[2]")); }
         }
 
-        public IWebElement SalesData2015
+        public IWebElement SalesData2016
         {
             get { return _firefox.FindElement(By.XPath(".//*[@id='tab_info']/ul/li[1]")); }
 
         }
 
-        public IWebElement SalesData2016
+        public IWebElement SalesData2017
         {
             get { return _firefox.FindElement(By.XPath(".//*[@id='tab_info']/ul/li[2]")); }
 
         }
 
-        public IWebElement TotalSumSpravochyeDannye2015
+        public IWebElement TotalSumSpravochyeDannye2016
         {
             get { return _firefox.FindElement(By.XPath(".//*[@id='tableprodprep_customer']/tbody/tr[1]/td[2]")); }
         }
 
-        public IWebElement TotalSumSpravochyeDannye2016
+        public IWebElement TotalSumSpravochyeDannye2017
         {
             get { return _firefox.FindElement(By.XPath(".//*[@id='tableprodprep_customer_cur_year']/tbody/tr[1]/td[2]")); }
            

@@ -153,7 +153,6 @@ namespace Planirovanie
                 }
                 if (!method.IsPreparationListExist())
                 {
-                    method.GetListPreparationFromExcelForUser(user);
                     firefox.Navigate().GoToUrl(logoutTest);
                     continue;
                 }
@@ -219,6 +218,43 @@ namespace Planirovanie
             firefox.Quit();
         }
 
+
+        [Test]
+        public void CheckAuditWithExcelForPm()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            int[] chainPM = { 2200, 1965, 2718, 2864, 1901, 2195, 2128, 2494, 8003, 2859, 2708, 1638, 1174, 2113, 2711, 8067,  2205, 1598, 2212, 754, 2849, 2861, 8061, 8012, 8013};
+            method.StoreExcelDataAudit();
+
+
+            foreach (var user in chainPM)
+            {
+
+                method.LoginStada(test, "user_" + user, "1");
+                if (!method.IsLoginSuccess(test, user.ToString(), "1"))
+                {
+                    Console.WriteLine("user_" + user + "  Incorrect login or password");
+                    firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+                if (!method.IsPreparationListExist())
+                {
+                   firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+
+                Console.WriteLine("User_" + user + ":");
+                Waiting.WaitForAjax(firefox);
+                method.CheckAuditDataWithExcelForPm();
+                method.LogoutStada(logoutTest);
+            }
+           
+            firefox.Quit();
+        }
+
+
+
         [Test]
         public void CheckAuditWithWeb()
         {
@@ -258,12 +294,12 @@ namespace Planirovanie
             //new PM    8003, 754, 8061, 1174, 1598, 1638, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 2212, 2494, 2708, 2711, 2718, 2849, 2859, 2861, 2864,  8067 
 
             string[] chain1340 = new string[] { "1340" };
-            string[] chain88 = new string[] { "2200", "1965", "2718", "625", "116", "968", "589", "419", "245", "1097","937",  "9034", "9010" };// ГОТОВО
+            string[] chain88 = new string[] {/* "2200", "1965", "2718",*/ "625", "116", "968", "589", "419", "245", "1097","937",  "9034", "9010" };// ГОТОВО
             string[] chain31_94 = new string[] { /*"2864","1901", "2195", "2128", "2494", "1048", "578", "832", "2351","874", "833", "2359", "271",*/ /*"892"*//*, "8002", "9036","9056",*/ "9014", "9054" };// УТВЕРДИЛА
             string[] chain32 = new string[] { /*"8003",*//* "718", "122", "772", "335", "8083", "83", "359", "115",*/ "9012", "9037" };//Готово
             string[] chain42_106 = new string[] { "2859", "2708", "1638", "1174","12", "551", "2762", "269","64", "19", "2534", "344", "9002", "9027" };//
             string[] chain76 = new string[] { /*"2113", "2755", "253", "1801", "8039", "8025", "1835",*/ "1525", "299", "9016", "9041"};//
-            string[] chain105 = new string[] { /*"2711", "8067", "2205",*/ "20", "829", "220", "1235", "8005", "46", "623", "828", "36", "9030", "9020" };//
+            string[] chain105 = new string[] { /*"2711", "8067", "2205",*/ /*"20",*/ /*"829", "220", "1235", "8005", "46",*/ "623", "828", "36", "9030", "9020" };//
             string[] chain115 = new string[] { "1598", "2212", "2725", "8022", "200", "1224", "1226", "1821", "1874", "951", "9006", "9040" };//
             string[] chain116 = new string[] { "754", "2849","2861","8061", "1404", "8018", "647", "8017", "8019", "579", "8016", "1855", "9045", "9046" }; //
             string[] chain33 = new string[] { /*"8012",*/ "8069", "93", "147", "1139", "1415", "1419", "142", "8015", "9048", "9023" };// 
@@ -271,7 +307,7 @@ namespace Planirovanie
 
             string[] chain1111 = new string[] { "8071", "8072", "8073", "8074", "8075", "8076", "8077", "8078", "8079", "9051", "9052" };
 
-            foreach (var user in chain33)
+            foreach (var user in chain88)
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
@@ -290,7 +326,7 @@ namespace Planirovanie
             var pageElements = new PageElements(firefox);
             WebDriverWait wait = new WebDriverWait(firefox, TimeSpan.FromSeconds(120));
 
-            string[] chain88 = new string[] {/* "9010", "9034", "937", "1097", "245", "419", "589", */"968", "116"};//ГОТОВО
+            string[] chain88 = new string[] { "9010", "9034", "937", "1097", "245", "419", "589", "968", "116"};//ГОТОВО
             string[] chain31_94 = new string[] { "9054", "9014", "9056", "9036", "892", "271", "2359", "833", "874", "2351", "832", "8002", "578" };//УТВЕРДИЛА
             string[] chain32 = new string[] { "9037", "9012", "115", "359", "83", "8083", "335", "772", "122"};//УТВЕРДИЛА
             string[] chain42_106 = new string[] { "9027", "9002", "344", "2534", "19", "64", "269", "2762", "551" };//автотест
@@ -305,7 +341,7 @@ namespace Planirovanie
             
            
 
-            foreach (var user in chain33)
+            foreach (var user in chain88)
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");

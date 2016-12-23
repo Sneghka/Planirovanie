@@ -24,6 +24,9 @@ namespace Planirovanie
         public string Status { get; set; }
         public string DistrictName3 { get; set; }
         public string Position { get; set; }
+        public string AreaName { get; set; }
+        public int SalesType { get; set; }
+
 
 
         public string WebName
