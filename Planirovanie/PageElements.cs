@@ -21,9 +21,11 @@ namespace Planirovanie
 
         #region ElementsXPath
 
+
         public const string LoginFieldXPath = ".//*[@id='login']";
         public const string PasswordFieldXPath = ".//*[@id='password']";
         public const string SubmitButtonXPath = ".//*[@id='center']/form/fieldset/input[3]";
+        public const string PreparationTable = ".//*[@id='preparation_info']/tbody";
         public const string TotalSumRubXPath = ".//*[@id='sumEuro']";
         public const string TotalPcsXPath = ".//*[@id='sumPOPPVP']";
         public const string ChoosePreparationButtonXPath = ".//*[@id='load_sku_customer']";
@@ -39,6 +41,7 @@ namespace Planirovanie
         public const string InputFieldAuditXPath = "html/body/div[2]/input";
         public const string GrXPath = ".//*[@class='inputShadow']";
         public const string GrSliderXPath = ".//*[@id='sliderGP']";
+
        
 
         public const string Gr1340XPath =".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div";

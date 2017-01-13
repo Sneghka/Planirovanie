@@ -62,6 +62,8 @@
     <Compile Include="FitoFharm\CheckPlanirovschikFitoFharm.cs" />
     <Compile Include="EcxelObj\UniversalExcelObj.cs" />
     <Compile Include="EcxelObj\UniversalExcelObjList.cs" />
+    <Compile Include="Objects\DistributionSpravochnikRow.cs" />
+    <Compile Include="Objects\DistributionSpravochnikRowList.cs" />
     <Compile Include="Stada\CheckPlanirovschikStada.cs" />
     <Compile Include="FitoFharm\FitoFharmMethods.cs" />
     <Compile Include="Helper.cs" />

@@ -198,13 +198,74 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-            // 1340, 2711, 2149, 2205, 1514, 20
+            // 1340, 9010_m004c
+            //МОСКВА ----- 9010_m004c, 9012_l428n, 9002_b155d, 9016_v827s, 9045_y374c, 9025_l043g
             method.StoreExcelDataDistribution();
-            method.LoginStada(test, "user_1340", "1");
+            method.LoginStada(stada, "user_9045", "y374c");
             method.CheckDistributionDataWithExcel();
 
             firefox.Quit();
         }
+
+        [Test]
+        public void CheckDistributionWithExcelGlobalRussia()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            method.LoginStada(stada, "user_1340", "m600e");
+            method.CheckDistributionDataWithExcelRussia();
+
+        }
+
+        [Test]
+        public void CheckDistributionWithExcelForNop()
+        {
+            int[] chainNOP = {625, 1048, 718, 12, 2755, 20, 2725,1404, 8069, 8070}; 
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            
+            method.StoreLoginPasswordFromExcel();
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            foreach (var nop in chainNOP)
+            {
+                var user = "user_" + nop;
+                var password = method.GetPasswordByUser(nop.ToString());
+                Console.WriteLine(user + "_" + password);
+                method.LoginStada(stada, user, password); 
+                method.CheckDistributionDataWithExcelForNop();
+                method.LogoutStada(logoutStada);
+            }
+        }
+
+        [Test]
+        public void CheckDistributionWithExcelForTM()
+        {
+            //Regions - Центр, Юг, Урал, Поволжье, Москва, Северо-Запад, Сибирь-Дальний Восток
+
+            int[] TmCenter = { 116, 892, 718, 12, 2755, 20, 2725, 1404, 8069, 8070, 8072 }; // проверить правила проверки для льготы и тендера 8069 и 8070
+            int[] TmSouth = { 116, 892, 718, 12, 2755, 20, 2725, 1404, 8069, 8070, 8072 };
+
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+
+            method.StoreLoginPasswordFromExcel();
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            foreach (var nop in TmCenter)
+            {
+                var user = "user_" + nop;
+                var password = method.GetPasswordByUser(nop.ToString());
+                Console.WriteLine(user + "_" + password);
+                method.LoginStada(stada, user, password);
+                method.CheckDistributionDataWithExcelForTm("Центр");
+                method.LogoutStada(logoutStada);
+            }
+        }
+
+
 
         [Test]
         public void CheckAuditWithExcel()
@@ -392,25 +453,26 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            var pageElements = new PageElements(firefox);
-            WebDriverWait wait = new WebDriverWait(firefox, TimeSpan.FromSeconds(120));
-
+            
             string[] chainPM_BU84_32_43 = new string[] { "1901", "2195", "1590", "1763", "2128", "2494", "8003", "1172", "2708", "1638", "1174", "2393" };
             string[] chainPM_BU88 = { "2200", "1965", "2718" };
             string[] chainPM_BU76 = { "1788", "2113", "2222" };
             string[] chainPM_BU105_112_115 = { "2711", "2149", "2205", "1514", "754", "8061", "1598" };
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725" };
+            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "1404", "2725", "8069", "8070" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Замороженные_препараты_на_НОП.xls");
+            /*method.StoreLoginPasswordFromExcel();*/
 
             foreach (var user in chainPM_NOP)
             {
-                method.LoginStada(test, "user_" + user, "1");
+
+                /* method.LoginStada(stada, "user_" + user, method.GetPasswordByUser(user));*/
+                method.LoginStada(stada, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
                 method.IsGrUnchangeable();
 
-                method.LogoutStada(logoutTest);
+                method.LogoutStada(logoutStada);
             }
 
             firefox.Quit();
@@ -428,17 +490,17 @@ namespace Planirovanie
             string[] chainPM_BU88 = { "2200", "1965", "2718" };
             string[] chainPM_BU76 = { "1788", "2113", "2222" };
             string[] chainPM_BU105_112_115 = { "2711", "2149", "2205", "1514", "754", "8061", "1598" };
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725" };
+            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Unfrozen.xls");
 
             foreach (var user in chainPM_NOP)
             {
-                method.LoginStada(test, "user_" + user, "1");
+                method.LoginStada(stada, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
                 method.IsGrChangeable();
-                method.LogoutStada(logoutTest);
+                method.LogoutStada(logoutStada);
             }
             firefox.Quit();
         }

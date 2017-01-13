@@ -120,7 +120,7 @@ namespace Planirovanie
         public List<int> GetIdList()
         {
             return (from r in this
-                    select r.IdPrUniq).ToList();
+                    select r.Segment == 2 ? r.IdPrUniq*-1 : r.IdPrUniq ).ToList();
         }
 
         public static List<string> CompareStrings(List<string> list1, List<string> list2)

@@ -31,3 +31,4 @@ D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\W
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csproj.ResolveComReference.cache
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.pdb
+D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csprojResolveAssemblyReference.cache
