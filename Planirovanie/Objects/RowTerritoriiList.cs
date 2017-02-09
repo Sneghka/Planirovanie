@@ -11,7 +11,7 @@ namespace Planirovanie
         public List<string> GetTerritoriyList()
         {
             return (from row in this
-                    select row.DistrictName).ToList();
+                    select row.Name1RegionName).ToList();
 
         }
 
@@ -27,7 +27,7 @@ namespace Planirovanie
 
         public static List<RowTerritorii> CompareTerritoriis(List<RowTerritorii> list1, List<RowTerritorii> list2) //Ищем в списке list1 то что не входит в list2
         {
-            return (from data1 in list1 where !list2.Any(data2 => data2.FIO == data1.FIO && data2.DistrictName == data1.DistrictName) select data1).ToList();
+            return (from data1 in list1 where !list2.Any(data2 => data2.FIO == data1.FIO && data2.Name1RegionName == data1.Name1RegionName) select data1).ToList();
         }
         public static List<RowTerritorii> CompareBuId(List<RowTerritorii> list1, List<RowTerritorii> list2) //Ищем в списке list1 то что не входит в list2
         {

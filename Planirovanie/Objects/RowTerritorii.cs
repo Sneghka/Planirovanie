@@ -11,14 +11,19 @@ namespace Planirovanie
         public int IdSotr { get; set; }
         public string FIO { get; set; }
         public string Position { get; set; }
-        public int DistrictId { get; set; }
-        public string DistrictName { get; set; }
-        public string BuId { get; set; }
+        public int BuId { get; set; }
+        public int Name1RegionId { get; set; }
+        public string Name1RegionName { get; set; }
+        public int Name2OblastId { get; set; }
+        public string Name2OblastName { get; set; }
+        public int Name3RaionId { get; set; }
+        public string Name3RaionName { get; set; }
+
 
 
         public bool AreRowTerritoriiEqual(RowTerritorii rowTerritorii)
         {
-            return FIO == rowTerritorii.FIO && DistrictName == rowTerritorii.DistrictName;
+            return FIO == rowTerritorii.FIO && Name1RegionName == rowTerritorii.Name1RegionName;
         }
 
 

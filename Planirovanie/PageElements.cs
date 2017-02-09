@@ -41,8 +41,17 @@ namespace Planirovanie
         public const string InputFieldAuditXPath = "html/body/div[2]/input";
         public const string GrXPath = ".//*[@class='inputShadow']";
         public const string GrSliderXPath = ".//*[@id='sliderGP']";
+        public const string ClosePreparationListButtonXpath = "html/body/div[4]/div[3]/div/button[1]";
+        public const string TopMenuOdobreniePlanovButtonXpath = ".//*[@id='tabs']/ul/li[6]/a";
+        public const string TableOdobrenieXpath = ".//*[@id='dep_info']";
+        public const string TableOdobrenieRowsXpath = ".//*[@id='dep_info']/tbody/tr";
+        public const string GlobalApprovePlanButton1340Xpath = ".//*[@id='dep_info']/tbody/tr[2]/td[4]/input";
+        public const string UserTableRowsXpath = ".//*[@id='send-users-list']/tbody/tr";
 
-       
+
+
+
+
 
         public const string Gr1340XPath =".//*[@id='customer_settings_accordion']/div/table/tbody/tr[1]/td[3]/div/div[2]/div";
 

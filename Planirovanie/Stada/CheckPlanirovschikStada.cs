@@ -226,7 +226,7 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             
-            method.StoreLoginPasswordFromExcel();
+            method.StoreLoginPasswordFromExcel();// @"D:\Sneghka\Selenium\Projects\Planirovschik\Check_Login_Pass.xlsx"
             method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
             method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
             foreach (var nop in chainNOP)
@@ -245,8 +245,14 @@ namespace Planirovanie
         {
             //Regions - Центр, Юг, Урал, Поволжье, Москва, Северо-Запад, Сибирь-Дальний Восток
 
-            int[] TmCenter = { 116, 892, 718, 12, 2755, 20, 2725, 1404, 8069, 8070, 8072 }; // проверить правила проверки для льготы и тендера 8069 и 8070
-            int[] TmSouth = { 116, 892, 718, 12, 2755, 20, 2725, 1404, 8069, 8070, 8072 };
+            int[] TmCenter = { 116, 892, 115, 551, 1525, 1235, 1874, 8018, 93, 747, 8073 }; //Центр
+            int[] TmNorthWest = {968,832,2351, 8083, 64, 1835, 220, 1224, 8019, 1415, 8038, 8076};//Северо-Запад
+            int[] TmUral = {589,833,359,344,8039,36,8022,647,147,2433,8072 };//Урал
+            int[] TmPovolzhe = { 419, 578, 772, 2534, 299, 46, 623, 1226, 8016, 142, 8037};//Поволжье
+            int[] TmMoscow = { 245, 874,335,8002, 2762,8025,8005,200,1855,8015,8029,8079 };//Москва
+            int[] TmSibirDalnVostok = { 1097, 2359, 83, 269, 253, 828, 1821, 8017, 1139 ,8070, 8072 };//Сибирь-Дальний Восток
+            int[] TmSouth = { 937, 829, 271, 19, 1801, 122, 579,1419,951,1470,8077 };//Юг
+
 
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);

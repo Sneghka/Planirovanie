@@ -16,6 +16,7 @@ using System.IO.Pipes;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
+using Planirovanie.CheckStadaPlan;
 using Planirovanie.Objects;
 
 namespace Planirovanie
@@ -89,18 +90,22 @@ namespace Planirovanie
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
-                "Select * from [zone_of_resp$]");
+                "Select * from [Зоны ответственности$]");
             foreach (DataRow row in dt.Rows)
             {
                 if (row[0] == DBNull.Value) continue;
 
-                var rowData = new RowData
+                var rowData = new RowTerritorii()
                 {
-                    Id_BU = Convert.ToInt32(row["BUID"]),
-                    DistrictName3 = row["District.Name3"].ToString(),
                     IdSotr = Convert.ToInt32(row["id_Sotr"]),
-                    FIO = row["Full_name"].ToString(),
-                    Position = row["Position"].ToString()
+                    FIO = row["ФИО"].ToString(),
+                    Position = row["Должность"].ToString(),
+                    BuId = Convert.ToInt32(row["BUID"]),
+                    //Name1RegionId = row["id региона"].ToString(),
+                    Name1RegionName = row["Регион"].ToString(),
+
+
+
                 };
                 _preparationDataSpravochnik.Add(rowData);
             }
@@ -139,8 +144,7 @@ namespace Planirovanie
             pageElements.LoginField.SendKeys(login);
             pageElements.PasswordField.SendKeys(password);
             pageElements.SubmitButton.Click();
-            /* wait.Until(ExpectedConditions.VisibilityOfAllElementsLocatedBy(By.XPath(".//*[@id='dialog_init']")));*/
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
         }
 
         public bool IsLoginSuccess(string url, string login, string password)
@@ -755,7 +759,7 @@ namespace Planirovanie
                     FIO = row["FIO"].ToString(),
                     IdSotr = Convert.ToInt32(row["Id_Sotr"]),
                     Position = row["Position"].ToString(),
-                    DistrictName = row["DistrictName"].ToString()
+                    Name1RegionName = row["DistrictName"].ToString()
 
                 };
                 _planirovschikTerritorii.Add(rowData);
@@ -774,7 +778,7 @@ namespace Planirovanie
                     FIO = row["Full_name"].ToString(),
                     IdSotr = Convert.ToInt32(row["Id_Sotr"]),
                     Position = row["Position"].ToString(),
-                    DistrictName = row["DistrictName2"].ToString()
+                    Name1RegionName = row["DistrictName2"].ToString()
 
                 };
                 _spravochnikTerritorii.Add(rowData);
@@ -818,7 +822,7 @@ namespace Planirovanie
 
                 ws.Cells[i, 1] = _differencePlanirovschikWithSpravochik[i - 3].Position;
                 ws.Cells[i, 2] = _differencePlanirovschikWithSpravochik[i - 3].FIO;
-                ws.Cells[i, 3] = _differencePlanirovschikWithSpravochik[i - 3].DistrictName;
+                ws.Cells[i, 3] = _differencePlanirovschikWithSpravochik[i - 3].Name1RegionName;
             }
 
             ws.Cells[1, 5] = "Есть в справочнике, но нет в планировщике";
@@ -831,7 +835,7 @@ namespace Planirovanie
 
                 ws.Cells[i, 5] = _differenceSpravochikWithPlanirovschik[i - 3].Position;
                 ws.Cells[i, 6] = _differenceSpravochikWithPlanirovschik[i - 3].FIO;
-                ws.Cells[i, 7] = _differenceSpravochikWithPlanirovschik[i - 3].DistrictName;
+                ws.Cells[i, 7] = _differenceSpravochikWithPlanirovschik[i - 3].Name1RegionName;
             }
             wb.SaveAs(@"D:Sneghka\CompareTerritorii.xlsx");
             wb.Close(Excel.XlSaveAction.xlSaveChanges, Type.Missing, Type.Missing);
@@ -1192,6 +1196,7 @@ namespace Planirovanie
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var pageElements = new PageElements(_firefox);
             wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(PageElements.PreparationTable)));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='plan_status_select']/label[1]/span"))); // кнопка "Продуктов {0}" , число строк в таблице
             Thread.Sleep(500);
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));
             _numberTableRows = tableRows.Count;
@@ -1215,7 +1220,7 @@ namespace Planirovanie
 
                 int total2016Xls;
                 total2016Xls = _distributionSpravochnikRows.GetUpakovkiByIdBySegmentBySalesTypeWithoutCrimea(preparationId);
-                
+
                 if (preparationBU == 67 || preparationBU == 115)
                 {
                     total2016Xls = _distributionSpravochnikRows.GetUpakovkiByIdWithoutCrimea(preparationId);
@@ -1225,7 +1230,7 @@ namespace Planirovanie
                     preparationId *= -1;//  change id from negetive value to positive value
                     total2016Xls = _distributionSpravochnikRows.GetUpakovkiByIdBySegmentBySalesTypeWithoutCrimeaLgotaBU33(preparationId);
                 }
-                    
+
                 ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
                 Thread.Sleep(500);
                 Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
@@ -1239,7 +1244,7 @@ namespace Planirovanie
                 Waiting.WaitPatternPresentInAttribute(PageElements.SalesData2016Xpath, "class", "ui-tabs-selected", _firefox);
                 Thread.Sleep(200);
                 var total2016Web = Convert.ToInt32(pageElements.TotalSumSpravochyeDannye2016.Text.Replace(" ", ""));
-              
+
                 if (total2016Web == total2016Xls)
                 {
                     Console.WriteLine("№" + i + " " + preparationName + "_2016 (web/xls): " + total2016Web + " = " + total2016Xls);
@@ -1277,6 +1282,7 @@ namespace Planirovanie
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var pageElements = new PageElements(_firefox);
             wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(PageElements.PreparationTable)));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='plan_status_select']/label[1]/span"))); // кнопка "Продуктов {0}" , число строк в таблице
             Thread.Sleep(500);
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));
             _numberTableRows = tableRows.Count;
@@ -1761,7 +1767,6 @@ namespace Planirovanie
         {
             DataTable dtLoginPassword = new DataTable();
 
-
             WorkWithExcelFile.ExcelFileToDataTable(out dtLoginPassword, @"D:\Sneghka\Selenium\Projects\Planirovschik\Check_Login_Pass.xlsx",
                 "Select * from [Пользователи$]");
             foreach (DataRow row in dtLoginPassword.Rows)
@@ -2143,6 +2148,114 @@ namespace Planirovanie
                             where r.Login == "user_" + user
                             select r.Password).ToList();
             return password[0].ToString();
+        }
+
+        #endregion
+
+
+        #region CheckStadaPlans
+
+        public void GoToOdobreniePlanovTab()
+        {
+            var wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ClosePreparationListButtonXpath)));
+            Helper.TryToClickWithoutException(PageElements.ClosePreparationListButtonXpath, _firefox);
+            Waiting.WaitForAjax(_firefox);
+            Helper.TryToClickWithoutException(PageElements.TopMenuOdobreniePlanovButtonXpath, _firefox);
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TableOdobrenieXpath)));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='dep_info']/tbody/tr[1]/td")));
+        }
+
+        public void CalculateAllPlans(string url) // метод на заглушках - ПРОВЕРЯТЬ!!!!
+        {
+            var wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var rowList = _firefox.FindElements(By.XPath(PageElements.TableOdobrenieRowsXpath));
+
+            for (int i = 0; i < rowList.Count; i++)
+            {
+                var status = _firefox.FindElement(By.XPath($".//*[@id='dep_info']/tbody/tr[3]/td[{i}]"));
+                var buNumder = _firefox.FindElement(By.XPath($".//*[@id='dep_info']/tbody/tr[{i}]/td[1]"));
+                var approveTableButton = $".//*[@id='dep_info']/tbody/tr[{i}]/td[4]/input";
+
+                try
+                {
+                    if (status.Text != "Готов для одобрения")
+                    {
+                        Console.WriteLine("БЮ НЕ ОДОБРЕН - " + buNumder + " статус - " + status.Text);
+                        continue;
+                    }
+                    if (rowList[i].Text == "Одобрение") continue;
+                    if (rowList[i].Text == "Рассылка") return;
+                    Helper.TryToClickWithoutException(approveTableButton, _firefox);
+                    wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath(PageElements.GlobalApprovePlanButton1340Xpath)));
+                    Helper.TryToClickWithoutException(PageElements.GlobalApprovePlanButton1340Xpath, _firefox);
+                    var waitPlanCalculating = new WebDriverWait(_firefox, TimeSpan.FromMinutes(30));
+                    waitPlanCalculating.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(PageElements.GlobalApprovePlanButton1340Xpath)));
+                    Helper.TryToClickWithoutException("html/body/div[7]/div[11]/div/button[1]", _firefox); //Close Button
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='dep_info']/tbody/tr[1]/td"))); // ЗАголовок ОДОБРЕНИЕ 
+                    Console.WriteLine("Одобрено: БЮ - " + buNumder);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("БЮ НЕ ОДОБРЕН (exception)  - " + buNumder);
+                    Console.WriteLine("Exception - " + e.Message);
+                    Console.WriteLine("Exception inner - " + e.InnerException);
+                    _firefox.Navigate().GoToUrl(url);
+                    GoToOdobreniePlanovTab();
+                }
+            }
+        }
+
+
+
+        public void CheckUserNumberAndRegions()
+        {
+
+        }
+
+
+        public void CheckCalculatedPlans()
+        {
+            var wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var rowList = _firefox.FindElements(By.XPath(PageElements.TableOdobrenieRowsXpath));
+            var index = 0;
+            for (int i = 0; i < rowList.Count; i++)
+            {
+                if(rowList[i].Text != "Рассылка") continue;
+                index = i;
+                break;
+            }
+
+            // Блок проверки ПЛАНА 
+            //Цикл перебора БЮ
+            for (int j = index + 1; j < rowList.Count; j++)
+            {
+                var rassylkaButtonXpath = $".//*[@id='dep_info']/tbody/tr[{j}]/td[4]/input";
+                var buNumder = _firefox.FindElement(By.XPath($".//*[@id='dep_info']/tbody/tr[{j}]/td[1]"));
+
+                Helper.TryToClickWithoutException(rassylkaButtonXpath,_firefox);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[5]/div[11]/div/button[1]"))); //Close Button
+
+                // Цикл перебора пользователей внутри БЮ
+                var userList = _firefox.FindElements(By.XPath(PageElements.UserTableRowsXpath));
+
+                for (int i = 0; i < userList.Count; i++)
+                {
+                    var buId = Convert.ToInt32(userList[i].GetAttribute("bunit_id"));
+                    var userId = Convert.ToInt32(userList[i].GetAttribute("user_id"));
+                    var userName =_firefox.FindElement(By.XPath($".//*[@id='send-users-list']/tbody/tr[{i}]/td[3]")).Text;
+                    var status = _firefox.FindElement(By.XPath($".//*[@id='send-users-list']/tbody/tr[{i}]/td[6]")).Text;
+                    // var territorii = 
+
+                     var user = new User()
+                    {
+                        
+                    }
+                }
+
+
+
+            }
         }
 
         #endregion

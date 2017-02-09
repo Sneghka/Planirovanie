@@ -57,6 +57,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckStadaPlan\CheckDataBeforeSending.cs" />
+    <Compile Include="CheckStadaPlan\PageElementsAdditional.cs" />
+    <Compile Include="CheckStadaPlan\SeleniumTestBase.cs" />
+    <Compile Include="CheckStadaPlan\User.cs" />
+    <Compile Include="CheckStadaPlan\Wrapper.cs" />
     <Compile Include="EcxelObj\CheckXlsFiles.cs" />
     <Compile Include="EcxelObj\CompareXlsFilesMethods.cs" />
     <Compile Include="FitoFharm\CheckPlanirovschikFitoFharm.cs" />
