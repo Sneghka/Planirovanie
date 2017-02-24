@@ -15,7 +15,7 @@ namespace Planirovanie
     public static class Helper
     {
 
-       /* private static readonly FirefoxDriver _firefox;*/
+        /* private static readonly FirefoxDriver _firefox;*/
 
         public static bool IsElementPresent(By by, FirefoxDriver _firefox)
         {
@@ -32,14 +32,15 @@ namespace Planirovanie
 
         public static void TryToClickWithoutException(string locator, FirefoxDriver firefox)
         {
-           
+
             var MAX_STALE_ELEMENT_RETRIES = 100;
             var retries = 0;
             while (true)
             {
                 try
                 {
-                    WebDriverWait wait = new WebDriverWait(new SystemClock(), firefox, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5));
+                    WebDriverWait wait = new WebDriverWait(new SystemClock(), firefox, TimeSpan.FromSeconds(10),
+                        TimeSpan.FromSeconds(5));
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(locator)));
                     firefox.FindElement(By.XPath(locator)).Click();
                     Waiting.WaitForAjax(firefox);
@@ -57,6 +58,59 @@ namespace Planirovanie
                     {
                         throw e;
                     }
+                }
+            }
+        }
+
+        public static void CompareIdLists(List<int> listSpravochnik, List<int> listPlanirovschik)
+        {
+
+            var lengthFile1 = listSpravochnik.Count;
+            var lengthFile2 = listPlanirovschik.Count;
+
+            int x = 0;
+            int y = 0;
+
+            while (x < lengthFile1 || y < lengthFile2)
+            {
+                if ((x < lengthFile1 && listSpravochnik[x] < 0) || (y < lengthFile2 && listPlanirovschik[y] < 0))
+                {
+                    Console.WriteLine("Id территории отрицательное - сверка не прошла");
+                    return;
+                }
+                if (x < lengthFile1 && y < lengthFile2 && listSpravochnik[x] < listPlanirovschik[y])
+                {
+                    Console.WriteLine("Элемент из Справочника - " + listSpravochnik[x] +
+                                      " -  не содержится в Планировщике");
+                    x++;
+                    continue;
+                }
+                if (x < lengthFile1 && y < lengthFile2 && listSpravochnik[x] > listPlanirovschik[y])
+                {
+                    Console.WriteLine("Элемент из Планировщика - " + listPlanirovschik[y] +
+                                      " -  не содержится в Справочнике");
+                    y++;
+                    continue;
+                }
+                if (x < lengthFile1 && y < lengthFile2 && listSpravochnik[x] == listPlanirovschik[y])
+                {
+                    x++;
+                    y++;
+                    continue;
+                }
+
+                if (y >= lengthFile2)
+                {
+                    Console.WriteLine("Элемент из Справочника - " + listSpravochnik[x] +
+                                      " -  не содержится в Планировщике");
+                    x++;
+                    continue;
+                }
+                if (x >= lengthFile1)
+                {
+                    Console.WriteLine("Элемент из Планировщика - " + listPlanirovschik[y] +
+                                     " -  не содержится в Справочнике");
+                    y++;
                 }
             }
         }

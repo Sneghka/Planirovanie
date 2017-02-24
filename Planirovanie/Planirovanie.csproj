@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -61,6 +65,7 @@
     <Compile Include="CheckStadaPlan\PageElementsAdditional.cs" />
     <Compile Include="CheckStadaPlan\SeleniumTestBase.cs" />
     <Compile Include="CheckStadaPlan\User.cs" />
+    <Compile Include="CheckStadaPlan\UserList.cs" />
     <Compile Include="CheckStadaPlan\Wrapper.cs" />
     <Compile Include="EcxelObj\CheckXlsFiles.cs" />
     <Compile Include="EcxelObj\CompareXlsFilesMethods.cs" />
@@ -69,6 +74,7 @@
     <Compile Include="EcxelObj\UniversalExcelObjList.cs" />
     <Compile Include="Objects\DistributionSpravochnikRow.cs" />
     <Compile Include="Objects\DistributionSpravochnikRowList.cs" />
+    <Compile Include="Objects\PlanTableRow.cs" />
     <Compile Include="Stada\CheckPlanirovschikStada.cs" />
     <Compile Include="FitoFharm\FitoFharmMethods.cs" />
     <Compile Include="Helper.cs" />

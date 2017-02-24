@@ -12,11 +12,11 @@ namespace Planirovanie
         public string FIO { get; set; }
         public string Position { get; set; }
         public int BuId { get; set; }
-        public int Name1RegionId { get; set; }
+        public string Name1RegionId { get; set; }
         public string Name1RegionName { get; set; }
-        public int Name2OblastId { get; set; }
+        public string Name2OblastId { get; set; }
         public string Name2OblastName { get; set; }
-        public int Name3RaionId { get; set; }
+        public string Name3RaionId { get; set; }
         public string Name3RaionName { get; set; }
 
 
