@@ -75,19 +75,19 @@ namespace Planirovanie
             {
                 if ((x < lengthFile1 && listSpravochnik[x] < 0) || (y < lengthFile2 && listPlanirovschik[y] < 0))
                 {
-                    Console.WriteLine("Id территории отрицательное - сверка не прошла");
+                    Console.WriteLine("Id территории отрицательное - сверка не прошла (" + listPlanirovschik[y] + ")");
                     return;
                 }
                 if (x < lengthFile1 && y < lengthFile2 && listSpravochnik[x] < listPlanirovschik[y])
                 {
-                    Console.WriteLine("Элемент из Справочника - " + listSpravochnik[x] +
+                    Console.WriteLine("Территория из Справочника - ID " + listSpravochnik[x] +
                                       " -  не содержится в Планировщике");
                     x++;
                     continue;
                 }
                 if (x < lengthFile1 && y < lengthFile2 && listSpravochnik[x] > listPlanirovschik[y])
                 {
-                    Console.WriteLine("Элемент из Планировщика - " + listPlanirovschik[y] +
+                    Console.WriteLine("Территория из Планировщика - ID " + listPlanirovschik[y] +
                                       " -  не содержится в Справочнике");
                     y++;
                     continue;

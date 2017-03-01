@@ -18,10 +18,10 @@ namespace Planirovanie
         public List<RowTerritorii> GetUniqueNoteBySeveralFields()
         {
             //return this.Select(r => r.WebName).Distinct().ToList();
-           /* return (from r in this 
-                    select r.WebName).Distinct().ToList();*/
+            /* return (from r in this 
+                     select r.WebName).Distinct().ToList();*/
             return (from r in this
-                    group r by new {r.FIO, r.BuId, r.IdSotr} into grp
+                    group r by new { r.FIO, r.BuId, r.IdSotr } into grp
                     select grp.First()).ToList();
         }
 
@@ -34,7 +34,7 @@ namespace Planirovanie
             return (from data1 in list1 where !list2.Any(data2 => data2.FIO == data1.FIO && data2.BuId == data1.BuId && data1.IdSotr == data2.IdSotr) select data1).ToList();
         }
 
-      
+
         public List<int> GetRaionTerritorr(int userId)
         {
             return (from row in this
@@ -45,7 +45,7 @@ namespace Planirovanie
         public List<int> GetRaionTerritorrByOblastIdAndUserId(int oblastId, int userId)
         {
             return (from row in this
-                    where row.Name3RaionId != string.Empty && Convert.ToInt32(row.Name2OblastId) == oblastId && Convert.ToInt32(row.IdSotr) == userId
+                    where row.Name3RaionId != string.Empty && Convert.ToInt32(row.Name2OblastId) == oblastId && Convert.ToInt32(row.IdSotr) == userId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
                     select Convert.ToInt32(row.Name3RaionId)).Distinct().ToList();
         }
         public List<int> GetOblastTerritorr(int userId)
@@ -55,7 +55,7 @@ namespace Planirovanie
                     select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
         }
 
-        
+
         public List<int> GetRegionTerritorr(int userId)
         {
             return (from row in this
@@ -71,11 +71,11 @@ namespace Planirovanie
         }
 
         public List<int> GetOblastterritorrByRegionId(int regionId)
-         {
-             return (from row in this
-                 where row.Name2OblastId != string.Empty && Convert.ToInt32(row.Name1RegionId) == regionId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
-                     select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
-         }
+        {
+            return (from row in this
+                    where row.Name2OblastId != string.Empty && Convert.ToInt32(row.Name1RegionId) == regionId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
+                    select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
+        }
         public List<int> GetOblastterritorrByRegionIdUserBuId(int regionId, int userBuId)
         {
             return (from row in this
@@ -84,11 +84,11 @@ namespace Planirovanie
         }
 
 
-        public List<int> GetUserIdListByBuId(int buId) 
+        public List<int> GetUserIdListByBuId(int buId)
         {
             return (from row in this
-                where row.BuId == buId
-                select row.IdSotr).Distinct().ToList();
+                    where row.BuId == buId
+                    select row.IdSotr).Distinct().ToList();
         }
 
         public bool IsUserExistInSpravochink(int userId)
@@ -97,6 +97,16 @@ namespace Planirovanie
             {
                 if (row.IdSotr == userId) return true;
             }
+            return false;
+        }
+
+        public bool IsBuUserSpravochikMatchPlanirovschik(int buUserIdPlanirovschik, int userId)
+        {
+            var getBuSpravochnik = (from r in this
+                                    where r.IdSotr == userId
+                                    select r.BuId).Distinct().ToList();
+
+           if(getBuSpravochnik.Count==1) return true;
             return false;
         }
 

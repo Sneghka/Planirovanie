@@ -34,3 +34,4 @@ D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\P
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.pdb
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.xml
+D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csprojResolveAssemblyReference.cache

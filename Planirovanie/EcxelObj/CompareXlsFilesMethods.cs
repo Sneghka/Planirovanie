@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework.Constraints;
 using Planirovanie.Objects;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Planirovanie.EcxelObj
 {

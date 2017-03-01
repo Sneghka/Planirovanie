@@ -2577,9 +2577,8 @@ namespace Planirovanie
             }
         }
 
-        public List<PlanTableRow> ReadPlanTable1340(string tableXpath, int userId) // получить коллекцию tr
+        public List<PlanTableRow> ReadPlanTable1340(string tableXpath, int userId, int month) // получить коллекцию tr
         {
-            var startTimeReadPlan = DateTime.Now;
             var plan = new List<PlanTableRow>();
             var wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(tableXpath)));
@@ -2595,12 +2594,13 @@ namespace Planirovanie
             int i = 1;
             foreach (var tr in tbRows)
             {
-               
                 if (tr.InnerText == "&nbsp;" || tr.InnerText == " " || tr.InnerText == "")
                 {
                     i++;
                     continue;
                 }
+                if (tr.InnerText.Contains("Total")) break;
+
                 var childList = tr.ChildNodes;
 
                 if (childList[0].Name == "th")
@@ -2610,89 +2610,25 @@ namespace Planirovanie
                     continue;
                 }
 
-                var x = childList[0].InnerText;
-                var y = Convert.ToInt32(childList[1].InnerText);
-                var z = Convert.ToInt32(childList[2].InnerText);
-
-
-                var wString = childList[3].InnerText;
-                var w = Convert.ToInt32(childList[3].InnerText);
-
-
-
-
-                var planTableRow = new PlanTableRow()
+                for (int k = 1; k <= month; k++)
                 {
-                    UserName = userName,
-                    UserId = userId,
-                    PreparationName = preparationName1,
-                    TerritoriaName = childList[0].InnerText,
-                    JanPsc = Convert.ToInt32(childList[1].InnerText),
-                    FebPsc = Convert.ToInt32(childList[2].InnerText),
-                    MarPsc = Convert.ToInt32(childList[3].InnerText)
-                };
-                plan.Add(planTableRow);
-                Console.WriteLine(i + "/ ");
-                i++;
-            }
-
-
-
-            /* var rowList = _firefox.FindElements(By.XPath(tableXpath + "/tr")); // получить коллекцию tr
-            */
-            /*  var userName = _firefox.FindElement(By.XPath(".//*[@id='msg-dialog-body']/p[2]")).Text;
-              var preparationName = string.Empty;*/
-
-            /*for (int i = 0; i < rowList.Count; i++)
-            {
-                if (string.IsNullOrEmpty(rowList[i].Text) || rowList[i].Text == " ") continue;
-
-                var prepNameXpath = tableXpath + "/tr" + $"[{i + 1}]" + "/th";
-                if (Helper.IsElementPresent(By.XPath(prepNameXpath), _firefox))
-                {
-                    preparationName = _firefox.FindElement(By.XPath(prepNameXpath)).Text;
-                    continue;
-                }
-                
-                var trArray = rowList[i].Text.Split();
-                var terrName = string.Empty;
-                int janPcs = 0;
-                int febPcs = 0;
-                int marPcs = 0;
-                for (int k = 0; k < trArray.Length; k++)
-                {
-
-                    if (trArray[k].Any(x => char.IsLetter(x)))
+                    var planTableRow = new PlanTableRow()
                     {
-                        terrName += trArray[k] + " ";
-                        continue;
-                    }
-
-                    janPcs = Convert.ToInt32(trArray[k]);
-                    febPcs = Convert.ToInt32(trArray[k + 1]);
-                    marPcs = Convert.ToInt32(trArray[k + 2]);
-                    break;
+                        UserName = userName,
+                        UserId = userId,
+                        PreparationName = preparationName1,
+                        TerritoriaName = childList[0].InnerText,
+                        Month = k,
+                        Pcs = Convert.ToInt32(Regex.Replace(childList[k].InnerText, @"\s+", ""))
+                    };
+                    plan.Add(planTableRow);
+                    i++;
                 }
-
-                var planTableRow = new PlanTableRow()
-                {
-                    UserName = userName,
-                    UserId = userId,
-                    PreparationName = preparationName,
-                    TerritoriaName = terrName,
-                    JanPsc = janPcs,
-                    FebPsc = febPcs,
-                    MarPsc = marPcs
-                };
-                plan.Add(planTableRow);
-            }*/
-            var finishTimeReadPlan = DateTime.Now;
-            var lasting = startTimeReadPlan - finishTimeReadPlan;
-            Console.WriteLine("План считывался - " + lasting);
+            }
             return plan;
         }
 
-        public List<PlanTableRow> ReadPlanTableOrdinaryUser(string url, int idUser)
+        public List<PlanTableRow> ReadPlanTableOrdinaryUser(string url, int idUser, int month)
         {
             var planForOrdinaryUser = new List<PlanTableRow>();
             var firefox2 = new FirefoxDriver(SetUpFirefoxProfile());
@@ -2707,6 +2643,12 @@ namespace Planirovanie
             pageElements.SubmitButton.Click();
             Thread.Sleep(2000);
 
+            if (!Helper.IsElementPresent(By.XPath("html/body/div[4]/div[3]/div/button[1]"), firefox2))
+            {
+                firefox2.Quit();
+                return planForOrdinaryUser;
+            }
+
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[4]/div[3]/div/button[1]"))); // CLOSE BUTTON
             Helper.TryToClickWithoutException("html/body/div[4]/div[3]/div/button[1]", firefox2);
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElementsAdditional.TopMenuPlanyPoTerritoriamButton)));
@@ -2714,64 +2656,100 @@ namespace Planirovanie
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='regions_info_short']/tbody"))); // ТАБЛИЦА ТЕРРИТОРИЙ
             Thread.Sleep(2000);
             var terrList = firefox2.FindElements(By.XPath(".//*[@id='regions_info_short']/tbody/tr"));
-            //.//*[@id='regions_info_short']/tbody/tr
+
             for (int j = 1; j < terrList.Count; j++)
             {
+
                 Helper.TryToClickWithoutException($".//*[@id='regions_info_short']/tbody/tr[{j + 1}]", firefox2);
                 wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='plan']/tbody/tr[1]/th[2]")));
+
+                var terrName = firefox2.FindElement(By.XPath($".//*[@id='regions_info_short']/tbody/tr[{j + 1}]/td[2]")).Text;
                 // Заголовок "ПРЕПАРАТ"
-                Helper.TryToClickWithoutException(".//*[@id='export_plan_to_xls']", firefox2);
-                wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[5]/div[3]/div/button[1]")));
-                // Кнопка "ПРИНЯТЬ"
-                Helper.TryToClickWithoutException("html/body/div[5]/div[3]/div/button[1]", firefox2);
-                //Экспортируем файл в ексель
-                Thread.Sleep(5000);
 
-                var directory = new DirectoryInfo(@"D:\DownloadTest");
-                var myFile = (from f in directory.GetFiles()
-                              orderby f.LastWriteTime descending
-                              select f).First();
+                #region МЕТОД СЧИТЫВАНИЯ В ЕКСЕЛЬ
+                /* Helper.TryToClickWithoutException(".//*[@id='export_plan_to_xls']", firefox2);
+                 wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[5]/div[3]/div/button[1]")));
+                 // Кнопка "ПРИНЯТЬ"
+                 Helper.TryToClickWithoutException("html/body/div[5]/div[3]/div/button[1]", firefox2);
+                 //Экспортируем файл в ексель
+                 Thread.Sleep(5000);
 
-                Console.WriteLine(myFile.Name);
+                 var directory = new DirectoryInfo(@"D:\DownloadTest");
+                 var myFile = (from f in directory.GetFiles()
+                               orderby f.LastWriteTime descending
+                               select f).First();
 
-                DataTable dt = new DataTable();
-                WorkWithExcelFile.ExcelFileToDataTable(out dt, @"D:\DownloadTest\" + myFile,
-                    "SELECT * from [Worksheet$B2:F]");
+                 Console.WriteLine(myFile.Name);
 
-                foreach (DataRow row in dt.Rows)
+                 DataTable dt = new DataTable();
+                 WorkWithExcelFile.ExcelFileToDataTable(out dt, @"D:\DownloadTest\" + myFile,
+                     "SELECT * from [Worksheet$B2:F]");
+
+                 foreach (DataRow row in dt.Rows)
+                 {
+                     if (row[0] == DBNull.Value) continue;
+                     if (row["Препарат"].ToString() == "Итого") continue;
+
+                     var rowData = new PlanTableRow()
+                     {
+                         UserId = idUser,
+                         PreparationName = row["Препарат"].ToString(),
+                         JanPsc = Convert.ToInt32(row["Январь"]),
+                         FebPsc = Convert.ToInt32(row["Февраль"]),
+                         MarPsc = Convert.ToInt32(row["Март"])
+                     };
+                     planForOrdinaryUser.Add(rowData);
+                     //Console.WriteLine(rowData.UserId + " " + "Jan - " + rowData.JanPsc + "/ Feb -  " + rowData.FebPsc + "/ Mar - " + rowData.MarPsc);
+                 }*/
+                #endregion
+
+                #region USE HTML AGILITY PACK
+
+                var tableStructure = firefox2.FindElement(By.XPath(".//*[@id='plan']/tbody")).GetAttribute("innerHTML");
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(tableStructure);
+                var tbRows = htmlDoc.DocumentNode.Descendants("tr");
+
+                foreach (var tr in tbRows)
                 {
-                    if (row[0] == DBNull.Value) continue;
-                    if (row["Препарат"].ToString() == "Итого") continue;
+                    if (tr.InnerText.Contains("Препарат")) continue;
+                    if (tr.InnerText.Contains("Итого")) break;
 
-                    var rowData = new PlanTableRow()
+                    var childList = tr.ChildNodes;
+
+                    for (int k = 1; k <= month; k++)
                     {
-                        UserId = idUser,
-                        PreparationName = row["Препарат"].ToString(),
-                        JanPsc = Convert.ToInt32(row["Январь"]),
-                        FebPsc = Convert.ToInt32(row["Февраль"]),
-                        MarPsc = Convert.ToInt32(row["Март"])
-                    };
-                    planForOrdinaryUser.Add(rowData);
-                    //Console.WriteLine(rowData.UserId + " " + "Jan - " + rowData.JanPsc + "/ Feb -  " + rowData.FebPsc + "/ Mar - " + rowData.MarPsc);
+                        var prepName = childList[1].InnerText;
+                        var planTableRow = new PlanTableRow()
+                        {
+                            UserId = idUser,
+                            PreparationName = prepName.Contains("ЛЬГОТА") ? prepName.Substring(0, prepName.Length - 9) : prepName,
+                            TerritoriaName = terrName.Contains("ЛЛО") ? terrName.Substring(0, terrName.Length - 4) : terrName.Substring(0, terrName.Length - 10),
+                            Month = k,
+                            Pcs = Convert.ToInt32(Regex.Replace(childList[k + 2].InnerText, @"\s+", ""))
+                        };
+                        planForOrdinaryUser.Add(planTableRow);
+                    }
                 }
+                #endregion
+
             } // закончили считывать таблицы планов для территорий
             firefox2.Quit();
             return planForOrdinaryUser;
-
         }
 
-        public void ReadPlanFor33BU(string url)
+        public void ReadPlanFor33BU(string url, int month)
         {
-            var arr = new List<int> { 93/*, 147, 1139, 1415, 1419, 142, 8015*/ };
+            var arr = new List<int> { 93, 147, 1139, 1415, 1419, 142, 8015 };
 
-            for (int i = 0; i < arr.Count; i++)
+            foreach (int user in arr)
             {
-                var planForUser = ReadPlanTableOrdinaryUser(url, arr[i]);
+                var planForUser = ReadPlanTableOrdinaryUser(url, user, month);
                 _planForLgotaBu33.AddRange(planForUser);
             }
         }
 
-        public void CheckCalculatedPlans()
+        public void CheckCalculatedPlans(string url, int month)
         {
             var wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var rowList = _firefox.FindElements(By.XPath(PageElements.TableOdobrenieRowsXpath));
@@ -2783,14 +2761,13 @@ namespace Planirovanie
                 break;
             }
 
-            // Блок проверки ПЛАНА 
-            //Цикл перебора БЮ
-            /* for (int j = index + 2; j <= rowList.Count; j++)*/
-            for (int j = index + 2; j <= rowList.Count; j++)  // TEST берём только один ПЕРВЫЙ по списку БУ и в нём проверяем все территории и считываем план для одного пользователя
+            //**********************Цикл перебора БЮ*********************
+            for (int j = index + 2; j <= rowList.Count; j++)
             {
+                var startTime = DateTime.Now;
                 var rassylkaButtonXpath = $".//*[@id='dep_info']/tbody/tr[{j}]/td[4]/input";
                 var buNumder = Convert.ToInt32(_firefox.FindElement(By.XPath($".//*[@id='dep_info']/tbody/tr[{j}]/td[1]")).Text);
-                Console.WriteLine("j = " + j + " BU - " + buNumder);
+
                 Console.WriteLine("**********************");
                 Console.WriteLine("ПРОВЕРКА БИЗНЕС-ЮНИТА " + buNumder);
 
@@ -2809,11 +2786,17 @@ namespace Planirovanie
                     var regionsIdString = userList[i].GetAttribute("regions_ids");
                     var regionsIdList = new List<int>();
 
-                    Console.WriteLine((i + 1) + ". " + userId + " " + userName);
+                    Console.WriteLine((i + 1) + ". " + userId + " " + userName + "(BU " + buId + ")");
+
+
                     if (!_spravochnikTerritorii.IsUserExistInSpravochink(userId))
                     {
-                        Console.WriteLine("Пользователь с таким ID отсутсвует в справочнике");
+                        Console.WriteLine(i+1 +". " + userId + " " + userName + "(BU " + buId + ")"+ " - отсутсвует в справочнике");
                         continue;
+                    }
+                    if (!_spravochnikTerritorii.IsBuUserSpravochikMatchPlanirovschik(buId, userId))
+                    {
+                        Console.WriteLine("   " + userId + " " + userName + "(BU " + buId + ")" + " - БЮ не совпадает.");
                     }
 
                     if (regionsIdString.Contains(','))
@@ -2848,13 +2831,10 @@ namespace Planirovanie
                     var userEmailSpravochnik = UserList.GetUserEmailById(user.UserId, _usersListForEmailSpravochnik);
                     if (user.Email != userEmailSpravochnik)
                     {
-                        Console.WriteLine("Электронная почта не совпадает: (планировщик) " + user.Email + " / " +
+                        Console.WriteLine("   " + userId + " " + userName + "(BU " + buId + ") - " + "электронная почта не совпадает: (планировщик) " + user.Email + " / " +
                                           userEmailSpravochnik + " (справочник)");
                     }
-                    else
-                    {
-                        Console.WriteLine("Email - OK");
-                    }
+                    
                     #endregion
                     //******************CHECK TERRITORII*************************
                     #region
@@ -2866,8 +2846,7 @@ namespace Planirovanie
                     {
                         regionTerrForUserSpravochnik = _spravochnikTerritorii.GetRegionTerritorr(user.UserId, buNumder);
                     }
-
-
+                    
                     user.TerritoryIdArray.Sort();
 
                     if (raionTerrForUserFromSpravochnik.Count != 0)
@@ -2914,40 +2893,67 @@ namespace Planirovanie
                         Helper.CompareIdLists(oblListForUser, user.TerritoryIdArray);
                         //метод сверки областей по РЕГИОНУ
                     }
-                    Console.WriteLine("finished to check territorii");
+                    
                     #endregion
 
                     //*******************CHECK PLANS********************
 
                     if (user.Status != "Рассчитан")
                     {
-                        Console.WriteLine("План не расчитан - пользователь " + user.UserId);
+                        Console.WriteLine("   " + userId + " " + userName + "(BU " + buId + ") - План не расчитан ");
                         continue;
                     }
-                    if (i != 0) continue;
-                    var prosmotrPlanaButtonXpath = $".//*[@id='send-users-list']/tbody/tr[{i + 1}]/td[7]/a[1]"; // планы могут быть расчитаны частично и кнопка отсутсвует у нерасчитанных пользователей
+
+                    Console.WriteLine("   Проверка ПЛАНА:");
+                    //if (i != 0) continue;//условие для запуска проверки плана только для первого пользователя из БЮ !!!!!!!!!!!!!
+
+                     var prosmotrPlanaButtonXpath = $".//*[@id='send-users-list']/tbody/tr[{i + 1}]/td[7]/a[1]"; // планы могут быть расчитаны частично и кнопка отсутсвует у нерасчитанных пользователей
                     Helper.TryToClickWithoutException(prosmotrPlanaButtonXpath, _firefox);
-                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='msg-dialog-body']/table/tbody/tr[2532]/th")));// ЗАГОЛОВОК TOTAL в таблице
+
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.XPath($".//*[@id='closeUserBig_{userId}']")));// Кнопка ОК в таблице пользователя
                     var table1340Xpath = ".//*[@id='msg-dialog-body']/table/tbody";
+                    
+                    var login1340 = ReadPlanTable1340(table1340Xpath, user.UserId, month); // план для юзера из пользователя 1340
+                    var loginCurrentUser = ReadPlanTableOrdinaryUser(url, user.UserId, month);
 
-                    //TEST
+                    if (loginCurrentUser.Count == 0)
+                    {
+                        Helper.TryToClickWithoutException($".//*[@id='closeUserBig_{userId}']", _firefox);// Кнопка ОК - выход из плана пользователя
+                        Console.WriteLine("   " + userId + " " + userName + "(BU " + buId + ") - отсутствует план в Планировщике" );
+                        continue;
+                    }
 
-                    { var login1340 = ReadPlanTable1340(table1340Xpath, user.UserId); }
-                    //End TEST
+                    var diffName = PlanTableRowList.ComparePreparationName(login1340, loginCurrentUser); // Сравнение наименований препаратов
+                    if (diffName.Count > 0)
+                    {
+                        Console.WriteLine("Не совпадают наименования препаратов - " + diffName.Count + "кол-во несовпадений:");
+                        foreach (var name in diffName)
+                        {
+                            Console.WriteLine(name);
+                        }
+                    }
+                   
+                     if (!PlanTableRowList.IsTotalMatch(login1340, loginCurrentUser))
+                      {
+                          PlanTableRowList.ComparePlans(login1340, loginCurrentUser, _planForLgotaBu33);
+                      }
 
-
-                    //var login1340 = ReadPlanTable1340(table1340Xpath, user.UserId);
-
-
-                } // конец цикла перебора пользователей внутри Б, Проверка списка пользователей БЮ (сверка со справочником из закладки Зона ответсвенности)
+                    Helper.TryToClickWithoutException($".//*[@id='closeUserBig_{userId}']", _firefox);// Кнопка ОК - выход из плана пользователя
+                   
+                } // конец цикла перебора пользователей внутри БЮ, Проверка списка пользователей БЮ (сверка со справочником из закладки Зона ответсвенности)
                   // в планировщике могут быть пользователи, которых нет в справочнике (не ошибка)
 
                 #endregion
 
-                Helper.TryToClickWithoutException("html/body/div[5]/div[11]/div/button[1]", _firefox);//Close Button
+                Thread.Sleep(2000);
+
+                Helper.TryToClickWithoutException(".//*[@id='closeBU']", _firefox);//Close Button выход из списка пользователя БЮ
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.TableOdobrenieXpath)));
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='dep_info']/tbody/tr[1]/td")));
 
+                var finishTime = DateTime.Now;
+                var lasting = finishTime - startTime;
+                Console.WriteLine("Вермя проверки БЮ-" + buNumder + "  " + lasting);
 
             }// конец цикла перебора Бизнес Юнитов
         }

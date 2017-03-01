@@ -14,7 +14,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace Planirovanie.CheckStadaPlan
 {
     [TestFixture]
-   public class CheckDataBeforeSending: SeleniumTestBase
+    public class CheckDataBeforeSending : SeleniumTestBase
     {
         const string test = "http://test.stada.bi.morion.ua/";
         const string logoutTest = "http://test.stada.bi.morion.ua/logout.php";
@@ -50,32 +50,36 @@ namespace Planirovanie.CheckStadaPlan
         #endregion
 
         [Test]
-       public void CheckPlans()
+        public void CheckPlans()
         {
             var startTime = DateTime.Now;
             var methods = new Methods(Driver as FirefoxDriver);
+
+            var months = 3;
             //Перед считыванием вручную разбить задвоеные БЮ (напр 31,94 - копипастом продублировать всё для 31,а потом тоже самое для 94)
             methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp"); // считываем закладку Зоны ответственности из справочника
-   
-          Console.WriteLine("Считали зоны ответственности");
+
+            Console.WriteLine("Считали зоны ответственности");
             methods.StoreExcelDataEmailSpravochik("email"); // считываем закладку Email из справочника
             Console.WriteLine("Считали email");
             //Methods.StoreLoginPasswordFromExcel();
             methods.LoginStada(test, "user_1340", "m600e");
-           
+
             methods.GoToOdobreniePlanovTab();
             // Methods.CalculateAllPlans(stada); // ЗАГЛУШКА
-            methods.CheckCalculatedPlans();
-            methods.ReadPlanFor33BU(test);
+            methods.ReadPlanFor33BU(test, months);
+            methods.CheckCalculatedPlans(test, months);
+
 
             var finishTime = DateTime.Now;
             var lasting = startTime - finishTime;
-            Console.WriteLine("Время проверки планов для одного БЮ и считывание двух планов для одного пользователя - " + lasting);
+            Console.WriteLine("");
+            Console.WriteLine("ВРЕМЯ ПРОВЕРКИ ПЛАНОВ  - " + lasting);
             Driver.Quit();
 
         }
 
-       
+
 
 
 

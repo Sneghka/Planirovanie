@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium.Firefox;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
 using System.Data;
 using System.Threading;
