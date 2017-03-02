@@ -14,11 +14,14 @@ D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.dl
 D:\Sneghka\Selenium\Projects\Planirovanie\Planirovanie\obj\Debug\Planirovanie.pdb
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\Planirovanie.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\Planirovanie.pdb
+D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\nunit.framework.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\Selenium.WebDriverBackedSelenium.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\ThoughtWorks.Selenium.Core.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\WebDriver.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\WebDriver.Support.dll
+D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.pdb
+D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.xml
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\nunit.framework.xml
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\Selenium.WebDriverBackedSelenium.pdb
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\Selenium.WebDriverBackedSelenium.xml
@@ -31,7 +34,4 @@ D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\W
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csproj.ResolveComReference.cache
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.dll
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.pdb
-D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.dll
-D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.pdb
-D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\bin\Debug\HtmlAgilityPack.xml
 D:\Sneghka\Selenium\Projects\Planirovschik\Planirovanie\Planirovanie\obj\Debug\Planirovanie.csprojResolveAssemblyReference.cache

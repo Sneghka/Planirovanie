@@ -67,7 +67,7 @@ namespace Planirovanie.Objects
                     if (d.Pcs + pcsBU33 != row.Pcs)
                     {
                         Console.WriteLine("Упаковки не совпадают");
-                        Console.WriteLine(d.PreparationName + " " + d.TerritoriaName + " " + " месяц " + d.Month + row.Pcs + "(план 1340) " + d.Pcs + "(план пользователь) " + pcsBU33 + "(план БЮ33)");
+                        Console.WriteLine(d.PreparationName + " " + d.TerritoriaName + " " + " месяц-" + d.Month +" шт-" + row.Pcs + "(план 1340) " + d.Pcs + "(план пользователь) " + pcsBU33 + "(план БЮ33)");
                     }
 
                 }

@@ -54,6 +54,7 @@ namespace Planirovanie.CheckStadaPlan
         {
             var startTime = DateTime.Now;
             var methods = new Methods(Driver as FirefoxDriver);
+            var firefox2 = new FirefoxDriver();
 
             var months = 3;
             //Перед считыванием вручную разбить задвоеные БЮ (напр 31,94 - копипастом продублировать всё для 31,а потом тоже самое для 94)
@@ -67,14 +68,16 @@ namespace Planirovanie.CheckStadaPlan
 
             methods.GoToOdobreniePlanovTab();
             // Methods.CalculateAllPlans(stada); // ЗАГЛУШКА
-            methods.ReadPlanFor33BU(test, months);
-            methods.CheckCalculatedPlans(test, months);
+            methods.ReadPlanFor33BU(test, months, firefox2, logoutTest);
+            Console.WriteLine("Считали BU33");
+            methods.CheckCalculatedPlans(test, months, firefox2, logoutTest);
 
 
             var finishTime = DateTime.Now;
             var lasting = startTime - finishTime;
             Console.WriteLine("");
             Console.WriteLine("ВРЕМЯ ПРОВЕРКИ ПЛАНОВ  - " + lasting);
+            firefox2.Quit();
             Driver.Quit();
 
         }
