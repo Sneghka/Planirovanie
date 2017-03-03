@@ -21,7 +21,6 @@ namespace Planirovanie
             return (from r in this
                     select r.Name).Distinct().ToList();
         }
-
        
         public static List<RowData> ConvertSpravochikList(int[] months, RowDataList spravochnik)
         {
@@ -130,6 +129,7 @@ namespace Planirovanie
                     where !list2.Contains(s)
                     select s).ToList();
         }
+
         public static List<int> CompareNumbers(List<int> list1, List<int> list2)
         {
 
@@ -138,28 +138,27 @@ namespace Planirovanie
                     select s).ToList();
         }
 
-
         public List<RowData> GetListObjectsById(int id)
         {
             return (from r in this
                     where r.IdPrUniq == id
                     select r).ToList();
         }
+
         public int GetSumPcsByIdAndMonth(int id, int month)
         {
             return (from r in this
                     where r.IdPrUniq == id && r.Month == month
                     select r.Upakovki).Sum();
         }
+
         public int GetPcsByIdAndSegmentAndMonth(int id, int month, int segment)
         {
             return (from r in this
                     where r.IdPrUniq == id && r.Month == month && r.Segment == segment
                     select r.Upakovki).Sum();
         }
-
-
-
+        
         public int GetSumByChoosenMonth(int month)
         {
             return (from r in this
@@ -180,6 +179,7 @@ namespace Planirovanie
                     where r.IdPrUniq == id && r.SalesType == salesType
                     select r.Upakovki = r.Id_BU == 105 ? r.Upakovki / 2 : r.Upakovki).Sum();
         }
+
         public int GetUpakovkiByIdAndTwoSalesType(int id, int salesType1, int salesType2)
         {
             return (from r in this
@@ -200,13 +200,13 @@ namespace Planirovanie
                     where r.IdPrUniq == id && r.SalesType == salesType
                     select r.UpakovkiConcurent = r.Id_BU == 105 ? r.UpakovkiConcurent / 2 : r.UpakovkiConcurent).Sum();
         }
+
         public int GetUpakovkiConcurentByIdAndTwoSalesType(int id, int salesType1, int salesType2)
         {
             return (from r in this
                     where r.IdPrUniq == id && (r.SalesType == salesType1 || r.SalesType == salesType2)&&r.AreaName.Contains("Россия")
                     select r.UpakovkiConcurent = r.Id_BU == 105 ? r.UpakovkiConcurent / 2 : r.UpakovkiConcurent).Sum();
         }
-
 
         public List<string> GetNamesList()
         {

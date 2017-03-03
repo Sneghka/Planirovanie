@@ -58,16 +58,15 @@ namespace Planirovanie.CheckStadaPlan
 
             var months = 3;
             //Перед считыванием вручную разбить задвоеные БЮ (напр 31,94 - копипастом продублировать всё для 31,а потом тоже самое для 94)
-            methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp"); // считываем закладку Зоны ответственности из справочника
+            methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp"); 
 
             Console.WriteLine("Считали зоны ответственности");
-            methods.StoreExcelDataEmailSpravochik("email"); // считываем закладку Email из справочника
+            methods.StoreExcelDataEmailSpravochik("email"); 
             Console.WriteLine("Считали email");
             //Methods.StoreLoginPasswordFromExcel();
             methods.LoginStada(test, "user_1340", "m600e");
 
             methods.GoToOdobreniePlanovTab();
-            // Methods.CalculateAllPlans(stada); // ЗАГЛУШКА
             methods.ReadPlanFor33BU(test, months, firefox2, logoutTest);
             Console.WriteLine("Считали BU33");
             methods.CheckCalculatedPlans(test, months, firefox2, logoutTest);

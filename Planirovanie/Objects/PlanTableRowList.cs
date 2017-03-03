@@ -44,8 +44,10 @@ namespace Planirovanie.Objects
         }
 
 
-        public static void ComparePlans(List<PlanTableRow> plan1340, List<PlanTableRow> planUser, List<PlanTableRow> planBu33)
+        public static List<string> ComparePlans(List<PlanTableRow> plan1340, List<PlanTableRow> planUser, List<PlanTableRow> planBu33)
         {
+            var result = new List<string>();
+
             foreach (var row in plan1340)
             {
 
@@ -66,14 +68,14 @@ namespace Planirovanie.Objects
                     
                     if (d.Pcs + pcsBU33 != row.Pcs)
                     {
-                        Console.WriteLine("Упаковки не совпадают");
-                        Console.WriteLine(d.PreparationName + " " + d.TerritoriaName + " " + " месяц-" + d.Month +" шт-" + row.Pcs + "(план 1340) " + d.Pcs + "(план пользователь) " + pcsBU33 + "(план БЮ33)");
+                        result.Add(d.PreparationName + " " + d.TerritoriaName + " " + " месяц-" + d.Month + "/ "+ row.Pcs + "шт "  + "(план 1340) " + d.Pcs + "шт (план пользователь) " + pcsBU33 + "шт (план БЮ33)");
+                       // Console.WriteLine("Упаковки не совпадают");
+                        //Console.WriteLine(d.PreparationName + " " + d.TerritoriaName + " " + " месяц-" + d.Month +" шт-" + row.Pcs + "(план 1340) " + d.Pcs + "(план пользователь) " + pcsBU33 + "(план БЮ33)");
                     }
 
                 }
             }
-
-            Console.WriteLine("  План проверен");
+            return result;
         }
     }
 }
