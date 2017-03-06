@@ -102,11 +102,17 @@ namespace Planirovanie
 
         public bool IsBuUserSpravochikMatchPlanirovschik(int buUserIdPlanirovschik, int userId)
         {
+
             var getBuSpravochnik = (from r in this
                                     where r.IdSotr == userId
                                     select r.BuId).Distinct().ToList();
 
-           if(getBuSpravochnik.Count==1) return true;
+
+            foreach (var bu in getBuSpravochnik)
+            {
+                if(bu==buUserIdPlanirovschik)return true;
+            }
+            //if(getBuSpravochnik.Count==1) return true;
             return false;
         }
 

@@ -56,6 +56,7 @@ namespace Planirovanie
         private List<User> _usersListPlanirovschik = new List<User>();
         private UserList _usersListForEmailSpravochnik = new UserList();
         private List<PlanTableRow> _planForLgotaBu33 = new List<PlanTableRow>();
+        private readonly string regionsString = "Юг,Центр,Поволжье,Урал,Москва,Северо-Запад,Сибирь-Дальний Восток";
 
 
 
@@ -2651,15 +2652,19 @@ namespace Planirovanie
             }
 
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[4]/div[3]/div/button[1]"))); // CLOSE BUTTON
+            var buNumber =firefox2.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]")).GetAttribute("bu_id");
             Helper.TryToClickWithoutException("html/body/div[4]/div[3]/div/button[1]", firefox2);
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElementsAdditional.TopMenuPlanyPoTerritoriamButton)));
             Helper.TryToClickWithoutException(PageElementsAdditional.TopMenuPlanyPoTerritoriamButton, firefox2);
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='regions_info_short']/tbody"))); // ТАБЛИЦА ТЕРРИТОРИЙ
             Thread.Sleep(2000);
             var terrList = firefox2.FindElements(By.XPath(".//*[@id='regions_info_short']/tbody/tr"));
-
-            for (int j = 1; j < terrList.Count; j++)
+            
+            for (int j = 0; j < terrList.Count; j++)
             {
+                var regionName = terrList[j].Text.Split(' ');
+
+                if (regionsString.Contains(regionName[1])) continue;
 
                 Helper.TryToClickWithoutException($".//*[@id='regions_info_short']/tbody/tr[{j + 1}]", firefox2);
                 wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='plan']/tbody/tr[1]/th[2]")));
@@ -2765,6 +2770,7 @@ namespace Planirovanie
             //**********************Цикл перебора БЮ*********************
             for (int j = index + 2; j <= rowList.Count; j++)
             /*for (int j = index + 4; j <= rowList.Count; j++)*/ // начинаем с БЮ 42
+           //for (int j = index + 11; j <= rowList.Count; j++) // начинаем с БЮ 116
             {
                 var startTime = DateTime.Now;
                 var rassylkaButtonXpath = $".//*[@id='dep_info']/tbody/tr[{j}]/td[4]/input";
@@ -2926,8 +2932,20 @@ namespace Planirovanie
                             continue;
                         }
 
-                        Console.WriteLine("   Проверка ПЛАНА:");
-                        
+                        //Console.WriteLine("   Проверка ПЛАНА:");
+
+                        var loginCurrentUser = ReadPlanTableOrdinaryUser(url, user.UserId, month, firefox2, logout);
+
+                        if (loginCurrentUser.Count == 0)
+                        {
+                            //Helper.TryToClickWithoutException($".//*[@id='closeUserBig_{userId}']", _firefox);
+                            // Кнопка ОК - выход из плана пользователя
+                            Console.WriteLine("   " + userId + " " + userName + "(BU " + buId +
+                                              ") - отсутствует план в Планировщике");
+                            continue;
+                        }
+
+
                         var prosmotrPlanaButtonXpath = $".//*[@id='send-users-list']/tbody/tr[{i + 1}]/td[7]/a[1]";
                         // планы могут быть расчитаны частично и кнопка отсутсвует у нерасчитанных пользователей
                         Helper.TryToClickWithoutException(prosmotrPlanaButtonXpath, _firefox);
@@ -2935,17 +2953,6 @@ namespace Planirovanie
                         Thread.Sleep(500);
 
                         var login1340 = ReadPlanTable1340(user.UserId, month);
-
-                       var loginCurrentUser = ReadPlanTableOrdinaryUser(url, user.UserId, month, firefox2, logout);
-
-                        if (loginCurrentUser.Count == 0)
-                        {
-                            Helper.TryToClickWithoutException($".//*[@id='closeUserBig_{userId}']", _firefox);
-                            // Кнопка ОК - выход из плана пользователя
-                            Console.WriteLine("   " + userId + " " + userName + "(BU " + buId +
-                                              ") - отсутствует план в Планировщике");
-                            continue;
-                        }
 
                         var diffName = PlanTableRowList.ComparePreparationName(login1340, loginCurrentUser);
                         // Сравнение наименований препаратов
@@ -2987,6 +2994,7 @@ namespace Planirovanie
                         Helper.TryToClickWithoutException(rassylkaButtonXpath, _firefox);
                         wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='closeBU']")));//Close Button
                         userList = _firefox.FindElements(By.XPath(PageElements.UserTableRowsXpath));
+                       
                     }
 
                 } // конец цикла перебора пользователей внутри БЮ, Проверка списка пользователей БЮ (сверка со справочником из закладки Зона ответсвенности)

@@ -19,15 +19,21 @@ namespace Planirovanie
 
         public static bool IsElementPresent(By by, FirefoxDriver _firefox)
         {
-            try
+            int i = 0;
+            while (i < 5)
             {
-                _firefox.FindElement(by);
-                return true;
+                try
+                {
+                    _firefox.FindElement(by);
+                    return true;
+                }
+                catch (NoSuchElementException)
+                {
+                   i++;
+                    Thread.Sleep(500);
+                }
             }
-            catch (NoSuchElementException)
-            {
-                return false;
-            }
+            return false;
         }
 
         public static void TryToClickWithoutException(string locator, FirefoxDriver firefox)
@@ -101,14 +107,14 @@ namespace Planirovanie
 
                 if (y >= lengthFile2)
                 {
-                    Console.WriteLine("Элемент из Справочника - " + listSpravochnik[x] +
+                    Console.WriteLine("Территория из Справочника - ID " + listSpravochnik[x] +
                                       " -  не содержится в Планировщике");
                     x++;
                     continue;
                 }
                 if (x >= lengthFile1)
                 {
-                    Console.WriteLine("Элемент из Планировщика - " + listPlanirovschik[y] +
+                    Console.WriteLine("Территория из Планировщика - ID " + listPlanirovschik[y] +
                                      " -  не содержится в Справочнике");
                     y++;
                 }
