@@ -82,7 +82,7 @@ namespace Planirovanie
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt, path,
-                "Select * from [Sheet1$]");
+                "Select * from [GP$]");
             foreach (DataRow row in dt.Rows)
             {
                 if (row[0] == DBNull.Value) continue;
@@ -93,12 +93,12 @@ namespace Planirovanie
                     Name = Regex.Replace(name, @"\s+", " "),
                     Id_BU = Convert.ToInt32(row["id_BU"]),
                     BusinessUnit = row["BU"].ToString(),
-                    Year = Convert.ToInt32(row["Год"]),
-                    Month = Convert.ToInt32(row["Месяц"]),
-                    Segment = Convert.ToInt32(row["Сегмент"]),
-                    Upakovki = Convert.ToInt32(row["Сумма в упаковках"]),
-                    Summa = Convert.ToDecimal(row["Сумма в рублях"]),
-                    Group = row["Группа"].ToString(),
+                    Year = Convert.ToInt32(row["Year"]),
+                    Month = Convert.ToInt32(row["Month"]),
+                    Segment = Convert.ToInt32(row["Segment"]),
+                    Upakovki = Convert.ToInt32(row["Amount_of_packaging"]),
+                    Summa = Convert.ToDecimal(row["Amount_in_rubles"]),
+                    Group = row["Groups"].ToString(),
                     IdSotr = Convert.ToInt32(row["id_Sotr"])
                 };
                 _preparationDataSpravochnik.Add(rowData);
@@ -185,8 +185,8 @@ namespace Planirovanie
         public void StorePreparationNamesFromPlanirovschik()
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
-            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
-            Thread.Sleep(1000);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]")));
+            Thread.Sleep(3000);
             var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));
             _numberTableRows = tableRows.Count;
             Thread.Sleep(4000);
@@ -225,8 +225,7 @@ namespace Planirovanie
         public void ComparePreparationNameThroughObjects(int[] months)
         {
             var convertSpravochnik = RowDataList.ConvertSpravochikList(months, _preparationDataSpravochnik);
-            Console.WriteLine("СПРАВОЧНИК");
-
+            
             var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, _preparationNamePlanirovschik);
             if (diff1.Count != 0)
             {
@@ -2652,14 +2651,14 @@ namespace Planirovanie
             }
 
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath("html/body/div[4]/div[3]/div/button[1]"))); // CLOSE BUTTON
-            var buNumber =firefox2.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]")).GetAttribute("bu_id");
+            var buNumber = firefox2.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[1]")).GetAttribute("bu_id");
             Helper.TryToClickWithoutException("html/body/div[4]/div[3]/div/button[1]", firefox2);
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElementsAdditional.TopMenuPlanyPoTerritoriamButton)));
             Helper.TryToClickWithoutException(PageElementsAdditional.TopMenuPlanyPoTerritoriamButton, firefox2);
             wait2.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='regions_info_short']/tbody"))); // ТАБЛИЦА ТЕРРИТОРИЙ
             Thread.Sleep(2000);
             var terrList = firefox2.FindElements(By.XPath(".//*[@id='regions_info_short']/tbody/tr"));
-            
+
             for (int j = 0; j < terrList.Count; j++)
             {
                 var regionName = terrList[j].Text.Split(' ');
@@ -2770,7 +2769,6 @@ namespace Planirovanie
             //**********************Цикл перебора БЮ*********************
             for (int j = index + 2; j <= rowList.Count; j++)
             /*for (int j = index + 4; j <= rowList.Count; j++)*/ // начинаем с БЮ 42
-           //for (int j = index + 11; j <= rowList.Count; j++) // начинаем с БЮ 116
             {
                 var startTime = DateTime.Now;
                 var rassylkaButtonXpath = $".//*[@id='dep_info']/tbody/tr[{j}]/td[4]/input";
@@ -2974,7 +2972,7 @@ namespace Planirovanie
                                 Console.WriteLine("В плане ошибки. См. файл.");
                                 File.WriteAllLines(@"D:\Sneghka\Selenium\Projects\Planirovschik\Plans errors\User_" + user.UserId + ".txt", error);
                             }
-                            
+
                         }
 
                         Helper.TryToClickWithoutException($".//*[@id='closeUserBig_{userId}']", _firefox);
@@ -2994,7 +2992,7 @@ namespace Planirovanie
                         Helper.TryToClickWithoutException(rassylkaButtonXpath, _firefox);
                         wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='closeBU']")));//Close Button
                         userList = _firefox.FindElements(By.XPath(PageElements.UserTableRowsXpath));
-                       
+
                     }
 
                 } // конец цикла перебора пользователей внутри БЮ, Проверка списка пользователей БЮ (сверка со справочником из закладки Зона ответсвенности)

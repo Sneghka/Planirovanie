@@ -32,7 +32,7 @@ namespace Planirovanie
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник21.11.16.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
@@ -51,7 +51,7 @@ namespace Planirovanie
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник2_05.12.16___custom_.xls");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
             Console.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
