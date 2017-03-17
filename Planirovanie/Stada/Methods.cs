@@ -41,6 +41,7 @@ namespace Planirovanie
         private RowDataList _preparationDataSpravochnik = new RowDataList();
         private RowTerritoriiList _planirovschikTerritorii = new RowTerritoriiList();
         private RowTerritoriiList _spravochnikTerritorii = new RowTerritoriiList();
+        private RowTerritoriiList _planirovschikActualUsers = new RowTerritoriiList();
         private RowTerritoriiList planirovschikBuId = new RowTerritoriiList();
         private RowTerritoriiList spravochnikBuId = new RowTerritoriiList();
         private List<RowTerritorii> _differencePlanirovschikWithSpravochik = new RowTerritoriiList();
@@ -225,7 +226,7 @@ namespace Planirovanie
         public void ComparePreparationNameThroughObjects(int[] months)
         {
             var convertSpravochnik = RowDataList.ConvertSpravochikList(months, _preparationDataSpravochnik);
-            
+
             var diff1 = RowDataList.CompareRowDataObjects(convertSpravochnik, _preparationNamePlanirovschik);
             if (diff1.Count != 0)
             {
@@ -804,8 +805,7 @@ namespace Planirovanie
 
             for (int i = 1; i <= _numberTableRows; i++)
             {
-                var name =
-                    _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]"))
+                var name = _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]"))
                         .Text.Trim()
                         .Replace("\u00A0", " ")
                         .ToLower();
@@ -832,7 +832,7 @@ namespace Planirovanie
                 Console.WriteLine("Препараты отсутствуют в справочнике");
                 foreach (var d in compareWebwithExcel)
                 {
-                    Console.WriteLine(d);
+                    Console.WriteLine(d + ",");
                 }
             }
             if (compareExcelWithWeb.Count != 0)
@@ -840,7 +840,7 @@ namespace Planirovanie
                 Console.WriteLine("Препараты отсутствуют в планировщике");
                 foreach (var d in compareExcelWithWeb)
                 {
-                    Console.WriteLine(d);
+                    Console.WriteLine(d + ",");
                 }
             }
             Console.WriteLine("User - " + user + ". Проверен.");
@@ -2449,16 +2449,41 @@ namespace Planirovanie
 
         #region CheckStadaPlans
 
+        public void StoreActualPlanirovcshikUser(string sheetName)
+        {
+            DataTable dt = new DataTable();
+            WorkWithExcelFile.ExcelFileToDataTable(out dt,
+                @"D:\Sneghka\Selenium\Projects\Planirovschik\ActualPlanirovschikUsers.xlsx", "Select * from [" + sheetName + "$]");
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row[0] == DBNull.Value) continue;
+                var buID = row["bunit_id"].ToString();
+
+                if (!buID.Contains(','))
+                {
+                    var rowData = new RowTerritorii()
+                    {
+                        FIO = row["fio"].ToString(),
+                        IdSotr = Convert.ToInt32(row["id"]),
+                        Position = row["post"].ToString(),
+                        BuId = Convert.ToInt32(buID),
+                        Email = row["email"].ToString()
+                    };
+                    _planirovschikActualUsers.Add(rowData);
+                }
+            }
+        }
+
         public void StoreExcelDataTerritoriiSpravochnik(string sheetName)
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt,
-                @"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник3_14.12.16___custom_.xls", "Select * from [" + sheetName + "$]");
+                @"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx", "Select * from [" + sheetName + "$]");
             foreach (DataRow row in dt.Rows)
             {
                 if (row[0] == DBNull.Value) continue;
                 var buID = row["BUID"].ToString();
-
+                
                 if (!buID.Contains(','))
                 {
                     var rowData = new RowTerritorii()
@@ -2506,7 +2531,7 @@ namespace Planirovanie
         {
             DataTable dt = new DataTable();
             WorkWithExcelFile.ExcelFileToDataTable(out dt,
-                @"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник3_14.12.16___custom_.xls", "Select * from [" + sheetName + "$]");
+                @"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx", "Select * from [" + sheetName + "$]");
             foreach (DataRow row in dt.Rows)
             {
                 if (row[0] == DBNull.Value) continue;
@@ -2518,6 +2543,43 @@ namespace Planirovanie
 
                 };
                 _usersListForEmailSpravochnik.Add(rowData);
+            }
+        }
+
+        public void CompareActualUsers()
+        {
+            int i = 1;
+            foreach (var planUser in _planirovschikActualUsers)
+            {
+                Console.WriteLine(i +". " + planUser.IdSotr + " " + planUser.FIO + ":");
+                if (!_spravochnikTerritorii.IsUserExistInSpravochink(planUser.IdSotr))
+                {
+                    Console.WriteLine(i + ". Пользователь отсутствует в Справочнике: " + planUser.IdSotr + " " + planUser.FIO);
+                    i++;
+                    continue;
+                }
+                var spravUser = _spravochnikTerritorii.GetUserObjByUserId(planUser.IdSotr, planUser.BuId);
+                var spravUserEmail = UserList.GetUserEmailById(planUser.IdSotr, _usersListForEmailSpravochnik);
+
+               
+                var planUserName = Regex.Replace(planUser.FIO, @"\s+", "").ToLower();
+                var planUserPost = Regex.Replace(planUser.Position, @"\s+", "").ToLower();
+                var spravUserName = Regex.Replace(spravUser.FIO, @"\s+", "").ToLower();
+                var spravUserPost = Regex.Replace(spravUser.Position, @"\s+", "").ToLower();
+
+                if (planUserName != spravUserName)
+                {
+                    Console.WriteLine("Имя пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + "(планировщик) / " + spravUser.FIO + "(справочник)");
+                }
+                if (!planUserPost.Contains(spravUserPost))
+                {
+                    Console.WriteLine("Позиция пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + " "+  planUser.Position + "(планировщик) / " + spravUser.Position + "(справочник)");
+                }
+                if (planUser.Email != spravUserEmail)
+                {
+                    Console.WriteLine("Email пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + " " +  planUser.Email + "(планировщик) / " + spravUserEmail + "(справочник)");
+                }
+                i++;
             }
         }
 

@@ -86,7 +86,7 @@ namespace Planirovanie
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник3_14.12.16___custom_.xls");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.CheckPreparationData(months);
@@ -94,13 +94,13 @@ namespace Planirovanie
         }
 
         [Test]
-        public void CheckPreparationsDataByQRT()
+        public void CheckPreparationsDataByQrt()
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             int[] months = { 1, 2, 3 };
 
-            method.StoreExcelData(@"D:\Sneghka\IT\Selenium\Planirovschik_file\1_для_модуля__Справочник3_14.12.16___custom_.xls");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
             Debug.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.CheckPreparationDataByQrt(months);
@@ -136,14 +136,14 @@ namespace Planirovanie
             var method = new Methods(firefox);
 
 
-            /* int[] chainPM = { 58, 754, 1167, 1174, 1598, 1638, 1901, 1965, 2071, 2113, 2128, 2195, 2200, 2205, 2206, 2212, 2494, 2708, 2711, 2718, 2849, 2859 };*/
+             int[] chainPM = { 8003, 754, 1161, 1598, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 8067, 2212,  2708, 2711, 2718, 2849, 2859, 2861, 2863, 2864, 2866, 2887, 2892 };
 
-            int[] chainPM = { 8003, 754, 8061, 1174, 1598, 1638, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 2212, 2494, 2708, 2711, 2718, 2849, 2859, 2861, 2864,  8067 };
+            /*int[] chainPM = { 8003, 754, 8061, 1174, 1598, 1638, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 2212, 2494, 2708, 2711, 2718, 2849, 2859, 2861, 2864,  8067 };*/
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник2_05.12.16___custom_.xls");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
             foreach (var user in chainPM)
             {
-
+                Console.WriteLine("User_" + user + ":");
                 method.LoginStada(test, "user_" + user, "1");
                 if (!method.IsLoginSuccess(test, user.ToString(), "1"))
                 {
@@ -154,10 +154,11 @@ namespace Planirovanie
                 if (!method.IsPreparationListExist())
                 {
                     firefox.Navigate().GoToUrl(logoutTest);
+                    Console.WriteLine("Нет списка препаратов!");
                     continue;
                 }
 
-                Console.WriteLine("User_" + user + ":");
+                
                 Waiting.WaitForAjax(firefox);
                 method.CheckPreparationListForPM(user);
                 method.LogoutStada(logoutTest);
@@ -271,8 +272,7 @@ namespace Planirovanie
             }
         }
 
-
-
+        
         [Test]
         public void CheckAuditWithExcel()
         {
@@ -509,6 +509,26 @@ namespace Planirovanie
                 method.LogoutStada(logoutStada);
             }
             firefox.Quit();
+        }
+
+
+        [Test]
+        public void UserRelevance()
+        {
+            var firefox = new FirefoxDriver();
+            var methods = new Methods(firefox);
+
+
+            methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp");
+            Console.WriteLine("Считали зоны ответственности Справочник");
+            methods.StoreExcelDataEmailSpravochik("email");
+            Console.WriteLine("Считали email Справочник");
+            methods.StoreActualPlanirovcshikUser("Лист1");
+            Console.WriteLine("Считали актуальных пользователей из Планировщика");
+            methods.CompareActualUsers();
+            firefox.Quit();
+
+
         }
     }
 }

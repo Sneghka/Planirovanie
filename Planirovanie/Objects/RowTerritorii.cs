@@ -18,6 +18,7 @@ namespace Planirovanie
         public string Name2OblastName { get; set; }
         public string Name3RaionId { get; set; }
         public string Name3RaionName { get; set; }
+        public string Email { get; set; }
 
 
 

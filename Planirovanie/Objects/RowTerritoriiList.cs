@@ -15,6 +15,13 @@ namespace Planirovanie
 
         }
 
+        public RowTerritorii GetUserObjByUserId(int id, int buId)
+        {
+            return (from user in this
+                    where user.IdSotr == id
+                    select user).First();
+        }
+
         public List<RowTerritorii> GetUniqueNoteBySeveralFields()
         {
             //return this.Select(r => r.WebName).Distinct().ToList();
@@ -48,13 +55,13 @@ namespace Planirovanie
                     where row.Name3RaionId != string.Empty && Convert.ToInt32(row.Name2OblastId) == oblastId && Convert.ToInt32(row.IdSotr) == userId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
                     select Convert.ToInt32(row.Name3RaionId)).Distinct().ToList();
         }
+
         public List<int> GetOblastTerritorr(int userId)
         {
             return (from row in this
                     where row.IdSotr == userId && row.Name2OblastId != string.Empty
                     select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
         }
-
 
         public List<int> GetRegionTerritorr(int userId)
         {
@@ -76,13 +83,13 @@ namespace Planirovanie
                     where row.Name2OblastId != string.Empty && Convert.ToInt32(row.Name1RegionId) == regionId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
                     select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
         }
+
         public List<int> GetOblastterritorrByRegionIdUserBuId(int regionId, int userBuId)
         {
             return (from row in this
                     where row.Name2OblastId != string.Empty && Convert.ToInt32(row.Name1RegionId) == regionId && row.BuId == userBuId && Convert.ToInt32(row.Name1RegionId) != 8331 // БЕЗ КРЫМА
                     select Convert.ToInt32(row.Name2OblastId)).Distinct().ToList();
         }
-
 
         public List<int> GetUserIdListByBuId(int buId)
         {
@@ -110,7 +117,7 @@ namespace Planirovanie
 
             foreach (var bu in getBuSpravochnik)
             {
-                if(bu==buUserIdPlanirovschik)return true;
+                if (bu == buUserIdPlanirovschik) return true;
             }
             //if(getBuSpravochnik.Count==1) return true;
             return false;
