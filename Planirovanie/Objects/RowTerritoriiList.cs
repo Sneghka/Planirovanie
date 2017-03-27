@@ -15,7 +15,7 @@ namespace Planirovanie
 
         }
 
-        public RowTerritorii GetUserObjByUserId(int id, int buId)
+        public RowTerritorii GetUserObjByUserId(int id)
         {
             return (from user in this
                     where user.IdSotr == id

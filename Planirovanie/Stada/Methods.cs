@@ -344,8 +344,9 @@ namespace Planirovanie
             }
             else
             {
+                var diff = pcsSpravochnik - pcsPlanirovschik;
                 Console.WriteLine(month + "month pcs: справочник" + pcsSpravochnik + " НЕ РАВНО!!! " + pcsPlanirovschik +
-                                  " планировщик");
+                                  " планировщик (разница - " + diff + ")");
             }
         }
 
@@ -360,9 +361,10 @@ namespace Planirovanie
             }
             else
             {
-                Console.WriteLine("Total sum: справочник " +
-                                  _preparationDataSpravochnik.GetTotalSumRubById(preparationId, months) +
-                                  " НЕ РАВНО !!!! " + totalSum + " планировщик");
+                var sprav = _preparationDataSpravochnik.GetTotalSumRubById(preparationId, months);
+                var diff = sprav - totalSum;
+
+                Console.WriteLine("Total sum: справочник " + sprav + " НЕ РАВНО !!!! " + totalSum + " планировщик (разница - " + diff + ")");
             }
 
             if (_preparationDataSpravochnik.GetTotalPcsById(preparationId, months) == totalPcs)
@@ -1249,6 +1251,9 @@ namespace Planirovanie
             } // end FOR loop
         }
 
+
+      
+
         public void CheckDistributionDataWithExcelRussia()
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
@@ -1586,7 +1591,7 @@ namespace Planirovanie
 
 
             WorkWithExcelFile.ExcelFileToDataTable(out dtAudit2015,
-                @"D:\Sneghka\Selenium\Projects\Planirovschik\DataForCheck_20161220.xlsx",
+                @"D:\Sneghka\Selenium\Projects\Planirovschik\Аудит_DataForCheck_20170325_от_ЮЧ_ДД.xlsx",
                 "Select * from [Audit_2016$]");
             foreach (DataRow row in dtAudit2015.Rows)
             {
@@ -1603,13 +1608,13 @@ namespace Planirovanie
                 };
                 _audit2015XlsList.Add(rowData);
             }
-            Console.WriteLine("Page Audit2015 was stored");
+            Console.WriteLine("Page Audit was stored");
 
         }
 
         public void CheckAuditDataWithExcel()
         {
-            var action = new Actions(_firefox);
+            
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
             var pageElements = new PageElements(_firefox);
             wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
@@ -1619,50 +1624,45 @@ namespace Planirovanie
             _numberTableRows = tableRows.Count;
             Thread.Sleep(2000);
             Debug.WriteLine(_numberTableRows + " кол-во строк в таблице");
-            for (int i = 1; i <= _numberTableRows; i++)
+            for (int i = 297; i <= _numberTableRows; i++)
             {
                 wait.Until(
                     ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
                 Console.WriteLine("№" + i);
-                var preparationId =
-                    Convert.ToInt32(
-                        _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]"))
-                            .GetAttribute("data_id"));
-                var preparationName =
-                    _firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var preparationId =Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationName =_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
                 var raschetButtonXpath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
 
                 if (preparationId < 0)
                 {
                     preparationId *= -1;
                 }
-                if (
-                    !_firefox.FindElement(By.XPath(raschetButtonXpath))
-                        .GetAttribute("class")
-                        .Contains("ui-button-disabled")) // начало проверки на активность кнопки РАСЧЁТ  
+                if (_firefox.FindElement(By.XPath(raschetButtonXpath)).GetAttribute("class").Contains("ui-button-disabled")) 
                 {
-                    ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);",
+                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
+                    continue;
+                }
+
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);",
                         _firefox.FindElement(By.XPath(raschetButtonXpath)));
                     Thread.Sleep(500);
                     Helper.TryToClickWithoutException(raschetButtonXpath, _firefox);
-                    // click "Расчёт" для выбранного элемента
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SpravochyeDannyeButtonXPath)));
                     Helper.TryToClickWithoutException(PageElements.SpravochyeDannyeButtonXPath, _firefox);
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.AuditDataOwn2016XPath)));
                     Helper.TryToClickWithoutException(PageElements.AuditDataOwn2016XPath, _firefox);
-                    Waiting.WaitPatternPresentInAttribute(PageElements.AuditDataOwn2016XPath, "class",
-                        "ui-tabs-selected", _firefox);
+                    Waiting.WaitPatternPresentInAttribute(PageElements.AuditDataOwn2016XPath, "class","ui-tabs-selected", _firefox);
                     Thread.Sleep(200);
-                    var totalOwn2015 = Convert.ToInt32(pageElements.TotalSumOwnSalesData2015.Text.Replace(" ", ""));
+                    var totalOwn2016New = Convert.ToInt32(pageElements.TotalSumOwnSalesData2016New.Text.Replace(" ", ""));
 
-                    if (totalOwn2015 == _audit2015XlsList.GetUpakovkiById(preparationId))
+                    if (totalOwn2016New == _audit2015XlsList.GetUpakovkiById(preparationId))
                     {
-                        Console.WriteLine(preparationId + " " + preparationName + "_2016Own (web/xls): " + totalOwn2015 +
+                        Console.WriteLine(preparationId + " " + preparationName + "_2016Own (web/xls): " + totalOwn2016New +
                                           " = " + _audit2015XlsList.GetUpakovkiById(preparationId));
                     }
                     else
                     {
-                        Console.WriteLine(preparationId + " " + preparationName + "_2016Own (web/xls): " + totalOwn2015 +
+                        Console.WriteLine(preparationId + " " + preparationName + "_2016Own (web/xls): " + totalOwn2016New +
                                           " НЕ РАВНО!!! " + _audit2015XlsList.GetUpakovkiById(preparationId));
                     }
 
@@ -1670,31 +1670,27 @@ namespace Planirovanie
                     Waiting.WaitPatternPresentInAttribute(PageElements.AuditDataCompetitor2016XPath, "class",
                         "ui-tabs-selected", _firefox);
                     Thread.Sleep(200);
-                    var totalCompetitior2015 =
-                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2015.Text.Replace(" ", ""));
+                    var totalCompetitior2016New =
+                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2016New.Text.Replace(" ", ""));
 
-                    if (totalCompetitior2015 == _audit2015XlsList.GetUpakovkiConcurentById(preparationId))
+                    if (totalCompetitior2016New == _audit2015XlsList.GetUpakovkiConcurentById(preparationId))
                     {
                         Console.WriteLine(preparationId + " " + preparationName + "_2016Competitor (web/xls): " +
-                                          totalCompetitior2015 + " = " +
+                                          totalCompetitior2016New + " = " +
                                           _audit2015XlsList.GetUpakovkiConcurentById(preparationId));
                     }
                     else
                     {
                         Console.WriteLine(preparationId + " " + preparationName + "_2016Competitor (web/xls): " +
-                                          totalCompetitior2015 + " НЕ РАВНО!!!! " +
+                                          totalCompetitior2016New + " НЕ РАВНО!!!! " +
                                           _audit2015XlsList.GetUpakovkiConcurentById(preparationId));
                     }
                     Helper.TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, _firefox);
                     wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
                     Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
 
-                } // end IF check button
-                else
-                {
-                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
-                    continue;
-                }
+                 // end IF check button
+              
 
             }
         }
@@ -1745,7 +1741,7 @@ namespace Planirovanie
                     Waiting.WaitPatternPresentInAttribute(PageElements.AuditDataOwn2016XPath, "class",
                         "ui-tabs-selected", _firefox);
                     Thread.Sleep(200);
-                    var totalOwn2015 = Convert.ToInt32(pageElements.TotalSumOwnSalesData2015.Text.Replace(" ", ""));
+                    var totalOwn2015 = Convert.ToInt32(pageElements.TotalSumOwnSalesData2016New.Text.Replace(" ", ""));
                     var totalOwnSpravochnikUpakovki = _audit2015XlsList.GetUpakovkiByIdAndSalesType(preparationId, 1);
 
                     if (totalOwn2015 == totalOwnSpravochnikUpakovki)
@@ -1809,7 +1805,7 @@ namespace Planirovanie
                         "ui-tabs-selected", _firefox);
                     Thread.Sleep(200);
                     var totalCompetitior2015 =
-                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2015.Text.Replace(" ", ""));
+                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2016New.Text.Replace(" ", ""));
                     var totalCompetitorSpravochikpakovki =
                         _audit2015XlsList.GetUpakovkiConcurentByIdAndSalesType(preparationId, 1);
 
@@ -1928,7 +1924,7 @@ namespace Planirovanie
                         "ui-tabs-selected", _firefox);
                     Thread.Sleep(200);
 
-                    var totalOwn2015Plan = Convert.ToInt32(pageElements.TotalSumOwnSalesData2015.Text.Replace(" ", ""));
+                    var totalOwn2015Plan = Convert.ToInt32(pageElements.TotalSumOwnSalesData2016New.Text.Replace(" ", ""));
 
                     Helper.TryToClickWithoutException(PageElements.AuditDataCompetitor2016XPath, _firefox);
                     Waiting.WaitPatternPresentInAttribute(PageElements.AuditDataCompetitor2016XPath, "class",
@@ -1936,7 +1932,7 @@ namespace Planirovanie
                     Thread.Sleep(200);
 
                     var totalCompetitior2015Plan =
-                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2015.Text.Replace(" ", ""));
+                        Convert.ToInt32(pageElements.TotalSumCompetitorSalesData2016New.Text.Replace(" ", ""));
 
                     Thread.Sleep(2000);
 
@@ -1993,6 +1989,72 @@ namespace Planirovanie
         }
 
 
+        //Проверить просто наличие данных за январь в закладе 4 и 6 справочных данных
+        public void CheckIsJanDataPresent()
+        {
+            WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
+            var pageElements = new PageElements(_firefox);
+            wait.Until(ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+            Thread.Sleep(1000);
+            var tableRows = _firefox.FindElements(By.XPath(".//*[@id='preparation_info']/tbody/tr"));
+            _numberTableRows = tableRows.Count;
+            Thread.Sleep(2000);
+            Console.WriteLine(_numberTableRows + " кол-во строк в таблице");
+            for (int i = 1; i <= _numberTableRows; i++)
+            {
+                wait.Until(
+                    ExpectedConditions.PresenceOfAllElementsLocatedBy(By.XPath(".//*[@id='preparation_info']/tbody")));
+                Console.WriteLine("№" + i);
+                var preparationId =Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]")).GetAttribute("data_id"));
+                var preparationName =_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[3]")).Text;
+                var raschetButton =_firefox.FindElement(By.XPath(".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]"));
+                var raschetButtonXPath = ".//*[@id='preparation_info']/tbody/tr[" + i + "]/td[6]/input[1]";
+
+
+                if (raschetButton.GetAttribute("class").Contains("ui-button-disabled"))
+                {
+                    Console.WriteLine(preparationName + " - кнопка Расчет неактивна");
+                    continue;
+                }
+               // if (preparationId < 0) preparationId *= -1; //  change id from negetive value to positive value
+                ((IJavaScriptExecutor)_firefox).ExecuteScript("arguments[0].scrollIntoView(true);", raschetButton);
+                Thread.Sleep(500);
+                Helper.TryToClickWithoutException(raschetButtonXPath, _firefox);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SpravochyeDannyeButtonXPath)));
+                Helper.TryToClickWithoutException(PageElements.SpravochyeDannyeButtonXPath, _firefox);
+
+                // Блок сбора данных за 2016 год
+
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SalesData2016Xpath)));
+                Helper.TryToClickWithoutException(".//*[@id='tab_info']/ul/li[4]", _firefox); // клик по 4 закладке
+                Waiting.WaitPatternPresentInAttribute(".//*[@id='tab_info']/ul/li[4]", "class", "ui-tabs-selected",_firefox);
+                Thread.Sleep(200);
+                var totalJan_4 = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='tableprodprep_cur_year']/tbody/tr[1]/td[3]")).Text.Replace(" ", ""));
+
+                Helper.TryToClickWithoutException(".//*[@id='tab_info']/ul/li[6]", _firefox); // клик по 6 закладке
+                Waiting.WaitPatternPresentInAttribute(".//*[@id='tab_info']/ul/li[6]", "class", "ui-tabs-selected", _firefox);
+                Thread.Sleep(200);
+                var totalJan_6 = Convert.ToInt32(_firefox.FindElement(By.XPath(".//*[@id='tableprodconc_cur_year']/tbody/tr[1]/td[3]")).Text.Replace(" ", ""));
+
+                if (totalJan_4 == 0)
+                {
+                    Console.WriteLine(preparationId + " " + preparationName + " " + totalJan_4 + " / шт (4-ая закладка) ");
+                }
+
+                if (totalJan_6 == 0)
+                {
+                    Console.WriteLine(preparationId + " " + preparationName + " " + totalJan_6 + " / шт (4-ая закладка) ");
+                }
+
+                Helper.TryToClickWithoutException(PageElements.RaschetPlanaButtonXPath, _firefox);
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ChoosePreparationButtonXPath)));
+                Helper.TryToClickWithoutException(PageElements.ChoosePreparationButtonXPath, _firefox);
+
+
+            } // end FOR loop
+        }
+
+
         #endregion
 
         #region Chains
@@ -2016,7 +2078,10 @@ namespace Planirovanie
                 var loginPassword = new LoginPassword()
                 {
                     Login = row["login"].ToString(),
-                    Password = row["parole"].ToString()
+                    Password = row["parole"].ToString(),
+                    Email = row["e-mail"].ToString(),
+                    UserFio = row["user"].ToString(),
+                    UserId = Convert.ToInt32(row["Stada Pers Uniq_ID"])
                 };
                 _loginPasswordList.Add(loginPassword);
             }
@@ -2190,6 +2255,7 @@ namespace Planirovanie
 
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.ConfirmPlanButtonXPath)));
                 Helper.TryToClickWithoutException(PageElements.ConfirmPlanButtonXPath, _firefox);
+                //Thread.Sleep(1000);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(".//*[@id='decline_plan']")));
 
                 Console.WriteLine("№" + i + " " + preparationName + " - препарат утверждён");
@@ -2467,7 +2533,8 @@ namespace Planirovanie
                         IdSotr = Convert.ToInt32(row["id"]),
                         Position = row["post"].ToString(),
                         BuId = Convert.ToInt32(buID),
-                        Email = row["email"].ToString()
+                        Email = row["email"].ToString(),
+                        Login = row["login"].ToString()
                     };
                     _planirovschikActualUsers.Add(rowData);
                 }
@@ -2558,7 +2625,7 @@ namespace Planirovanie
                     i++;
                     continue;
                 }
-                var spravUser = _spravochnikTerritorii.GetUserObjByUserId(planUser.IdSotr, planUser.BuId);
+                var spravUser = _spravochnikTerritorii.GetUserObjByUserId(planUser.IdSotr);
                 var spravUserEmail = UserList.GetUserEmailById(planUser.IdSotr, _usersListForEmailSpravochnik);
 
                
@@ -2578,6 +2645,51 @@ namespace Planirovanie
                 if (planUser.Email != spravUserEmail)
                 {
                     Console.WriteLine("Email пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + " " +  planUser.Email + "(планировщик) / " + spravUserEmail + "(справочник)");
+                }
+                i++;
+            }
+        }
+
+        public void CompareActualUsers_2()
+        {
+            int i = 1;
+            foreach (var planUser in _planirovschikActualUsers)
+            {
+                Console.WriteLine(i + ". " + planUser.IdSotr + " " + planUser.FIO + ":");
+                if(!LoginPasswordList.IsUserExistInSpravochinkByLogin(planUser.Login, _loginPasswordList))
+                {
+                    Console.WriteLine(i + ". Пользователь отсутствует в Справочнике: " + planUser.IdSotr + " " + planUser.FIO);
+                    i++;
+                    continue;
+                }
+              
+                var spravUser = LoginPasswordList.GetUserObjByUserIdLogin(planUser.Login, _loginPasswordList);
+               // var email = spravUser.Email;
+                //var spravUserEmail = LoginPasswordList.GetUserEmailById(planUser.IdSotr, _loginPasswordList);
+                ;
+                //var spravUserEmail = UserList.GetUserEmailById(planUser.IdSotr, _usersListForEmailSpravochnik);
+
+
+                var planUserName = Regex.Replace(planUser.FIO, @"\s+", "").ToLower();
+                //var planUserPost = Regex.Replace(planUser.Position, @"\s+", "").ToLower();
+                var spravUserName = Regex.Replace(spravUser.UserFio, @"\s+", "").ToLower();
+                //var spravUserPost = Regex.Replace(spravUser.Position, @"\s+", "").ToLower();
+
+                /* if (planUserName != spravUserName)
+                 {
+                     Console.WriteLine("Имя пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + "(планировщик) / " + spravUser.UserFio + "(справочник)");
+                 }*/
+                /* if (!planUserPost.Contains(spravUserPost))
+                 {
+                     Console.WriteLine("Позиция пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + " " + planUser.Position + "(планировщик) / " + spravUser.Position + "(справочник)");
+                 }*/
+                 if (planUser.Login != spravUser.Login)
+                {
+                    Console.WriteLine("Логин пользователя не совпадает: (Login-" + planUser.Login + ") " + planUser.Login + "(планировщик) / " + spravUser.Login + "(справочник)");
+                }
+                if (planUser.Email != spravUser.Email)
+                {
+                    Console.WriteLine("Email пользователя не совпадает: (ID-" + planUser.IdSotr + ") " + planUser.FIO + " " + planUser.Email + "(планировщик) / " + spravUser.Email + "(справочник)");
                 }
                 i++;
             }

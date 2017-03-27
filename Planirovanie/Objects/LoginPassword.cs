@@ -10,5 +10,10 @@ namespace Planirovanie
     {
         public string Login { get; set; }
         public string Password { get; set; }
+        public string UserFio { get; set; }
+        public string Email { get; set; }
+        public int UserId { get; set; }
+        
+
     }
 }

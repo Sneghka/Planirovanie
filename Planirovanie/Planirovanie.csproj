@@ -74,6 +74,7 @@
     <Compile Include="EcxelObj\UniversalExcelObjList.cs" />
     <Compile Include="Objects\DistributionSpravochnikRow.cs" />
     <Compile Include="Objects\DistributionSpravochnikRowList.cs" />
+    <Compile Include="Objects\LoginPasswordList.cs" />
     <Compile Include="Objects\PlanTableRow.cs" />
     <Compile Include="Objects\PlanTableRowList.cs" />
     <Compile Include="Stada\CheckPlanirovschikStada.cs" />
