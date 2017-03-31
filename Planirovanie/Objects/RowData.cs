@@ -26,6 +26,8 @@ namespace Planirovanie
         public string Position { get; set; }
         public string AreaName { get; set; }
         public int SalesType { get; set; }
+        public int DataType { get; set; }
+        public int AreaId { get; set; }
 
 
 

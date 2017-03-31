@@ -25,7 +25,7 @@ namespace Planirovanie.Objects
         public int GetUpakovkiByIdBySegmentBySalesTypeWithoutCrimeaLgotaBU33(int id)
         {
             return (from r in this
-                    where r.PreparationId == id && r.RegionName1 != "Крым" && (r.Segment == 2 || r.Segment == 3 || r.SalesTypeId == 2)
+                    where r.PreparationId == id && r.RegionName1 != "Крым" && (r.Segment == 2 || r.Segment == 3 || r.SalesTypeId == 2 || r.SalesTypeId == 3)
                     select r.Upakovki).Sum();
         }
 
@@ -34,6 +34,18 @@ namespace Planirovanie.Objects
         {
             return (from r in this
                     where r.PreparationId == id && r.RegionName1 != "Крым" && (r.Segment == 1 || r.SalesTypeId == 1) && r.RegionName1 == region
+                    select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiByIdBySegmentBySalesTypeByRegionLgota33(int id, string region)
+        {
+            return (from r in this
+                    where r.PreparationId == id && r.RegionName1 != "Крым" && (r.Segment == 2 || r.SalesTypeId == 2 || r.SalesTypeId == 3 || r.Segment == 3) && r.RegionName1 == region
+                    select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiByIdByRegion(int id, string region)
+        {
+            return (from r in this
+                    where r.PreparationId == id && r.RegionName1 != "Крым" && r.RegionName1 == region
                     select r.Upakovki).Sum();
         }
     }

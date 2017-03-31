@@ -14,6 +14,23 @@ namespace Planirovanie
                     select row.Name1RegionName).ToList();
 
         }
+       /* public List<int> GetTerritoriyListIdByUserId(int userId)
+        {
+            var idTerrList = new List<int>();
+            var region = (from row in this
+                    where row.IdSotr == userId
+                    select Convert.ToInt32(row.Name3RaionId)<0 ? Convert.ToInt32(row.Name3RaionId)+10000 : Convert.ToInt32(row.Name3RaionId)>=30000 ? ).Distinct().ToList();
+            var oblast = (from row in this
+                          where row.IdSotr == userId
+                          select Convert.ToInt32(row.Name2OblastName)).Distinct().ToList();
+            var raion = (from row in this
+                          where row.IdSotr == userId
+                          select Convert.ToInt32(row.Name3RaionId)).Distinct().ToList();
+            idTerrList.AddRange(region);
+            idTerrList.AddRange(oblast);
+            idTerrList.AddRange(raion);
+            return idTerrList;
+        }*/
 
         public RowTerritorii GetUserObjByUserId(int id)
         {

@@ -53,7 +53,7 @@ namespace Planirovanie
 
             method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
             Console.WriteLine("Excel was stored");
-            method.LoginStada(test, "user_1340", "1");
+            method.LoginStada(stada, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
             Console.WriteLine("Planirovschik was stored");
             method.ComparePreparationNameThroughObjects(months);
@@ -88,7 +88,7 @@ namespace Planirovanie
 
             method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
             Debug.WriteLine("Excel was stored");
-            method.LoginStada(test, "user_1340", "1");
+            method.LoginStada(stada, "user_1340", "1");
             method.CheckPreparationData(months);
             firefox.Quit();
         }
@@ -98,11 +98,11 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 1, 2, 3 };
+            int[] months = { 4, 5, 6 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
             Debug.WriteLine("Excel was stored");
-            method.LoginStada(test, "user_1340", "1");
+            method.LoginStada(stada, "user_1340", "1");
             method.CheckPreparationDataByQrt(months);
             firefox.Quit();
         }
@@ -209,6 +209,20 @@ namespace Planirovanie
         }
 
         [Test]
+        public void CheckDistributionWithExcelQrt()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+
+           
+            method.StoreExcelDataDistributionQrt(@"D:\Sneghka\Selenium\Projects\Planirovschik\Копия рабочая файл истин факт дистр 2016 по sku_br 21032017.xlsx", "Select * from [2016qrt$]");
+            method.LoginStada(test, "user_1340", "1");
+            method.CheckDistributionQrtDataWithExcel();
+
+            firefox.Quit();
+        }
+
+        [Test]
         public void CheckDistributionWithExcelGlobalRussia()
         {
             var firefox = new FirefoxDriver();
@@ -223,21 +237,23 @@ namespace Planirovanie
         [Test]
         public void CheckDistributionWithExcelForNop()
         {
-            int[] chainNOP = {625, 1048, 718, 12, 2755, 20, 2725,1404, 8069, 8070}; 
+            int[] chainNOP = {/*625, 1048, 718, 12, 2755, 20, 2725,1404,*/ 8069, 8070};
+             
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             
             method.StoreLoginPasswordFromExcel();// @"D:\Sneghka\Selenium\Projects\Planirovschik\Check_Login_Pass.xlsx"
-            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
-            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distribution_NOP_TM_2016_2.xlsx", "Лист1");
+           // method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
             foreach (var nop in chainNOP)
             {
                 var user = "user_" + nop;
-                var password = method.GetPasswordByUser(nop.ToString());
-                Console.WriteLine(user + "_" + password);
-                method.LoginStada(stada, user, password); 
+                 var password = method.GetPasswordByUser(nop.ToString());
+                 Console.WriteLine(user + "_" + password);
+               /* Console.WriteLine(user + ":");*/
+                method.LoginStada(test, user, password); 
                 method.CheckDistributionDataWithExcelForNop();
-                method.LogoutStada(logoutStada);
+                method.LogoutStada(logoutTest);
             }
         }
 
@@ -248,9 +264,9 @@ namespace Planirovanie
 
             int[] TmCenter = { 116, 892, 115, 551, 1525, 1235, 1874, 8018, 93, 747, 8073 }; //Центр
             int[] TmNorthWest = {968,832,2351, 8083, 64, 1835, 220, 1224, 8019, 1415, 8038, 8076};//Северо-Запад
-            int[] TmUral = {589,833,359,344,8039,36,8022,647,147,2433,8072 };//Урал
-            int[] TmPovolzhe = { 419, 578, 772, 2534, 299, 46, 623, 1226, 8016, 142, 8037};//Поволжье
-            int[] TmMoscow = { 245, 874,335,8002, 2762,8025,8005,200,1855,8015,8029,8079 };//Москва
+            int[] TmUral = {/*589,*//*833,359,344,*/2882,36,8022,647,147,2433 };//Урал
+            int[] TmPovolzhe = { /*419, 578, 772, 2534, 299,*/ 46, 623/*, 1226, 8016, 142, 8037*/};//Поволжье
+            int[] TmMoscow = { /*245, 874,335,8002, 2762,8025,8005,200,1855,*/8015,8029,8079 };//Москва
             int[] TmSibirDalnVostok = { 1097, 2359, 83, 269, 253, 828, 1821, 8017, 1139 ,8070, 8072 };//Сибирь-Дальний Восток
             int[] TmSouth = { 937, 829, 271, 19, 1801, 122, 579,1419,951,1470,8077 };//Юг
 
@@ -259,16 +275,17 @@ namespace Planirovanie
             var method = new Methods(firefox);
 
             method.StoreLoginPasswordFromExcel();
-            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник2_05.12.2016.xlsx", "New");
-            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
-            foreach (var nop in TmCenter)
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distribution_NOP_TM_2016_2.xlsx", "Лист1");
+            //method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            foreach (var nop in TmMoscow)
             {
                 var user = "user_" + nop;
                 var password = method.GetPasswordByUser(nop.ToString());
                 Console.WriteLine(user + "_" + password);
-                method.LoginStada(stada, user, password);
-                method.CheckDistributionDataWithExcelForTm("Центр");
-                method.LogoutStada(logoutStada);
+               /* Console.WriteLine(user + ":");*/
+                method.LoginStada(test, user, password);
+                method.CheckDistributionDataWithExcelForTm("Москва");
+                method.LogoutStada(logoutTest);
             }
         }
 
@@ -279,8 +296,8 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-            method.StoreExcelDataAudit();
-            method.LoginStada(test, "user_1340", "1");
+            method.StoreExcelDataAudit("Audit_2016");
+            method.LoginStada(test, "user_1340", "m600e");
             method.CheckAuditDataWithExcel();
             firefox.Quit();
         }
@@ -292,7 +309,7 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             int[] chainPM = { 2200, 1965, 2718, 2864, 1901, 2195, 2128, 2494, 8003, 2859, 2708, 1638, 1174, 2113, 2711, 8067,  2205, 1598, 2212, 754, 2849, 2861, 8061, 8012, 8013};
-            method.StoreExcelDataAudit();
+            method.StoreExcelDataAudit("Audit_2016");
 
 
             foreach (var user in chainPM)
@@ -318,6 +335,55 @@ namespace Planirovanie
             }
            
             firefox.Quit();
+        }
+
+        [Test]
+        public void CheckAuditWithExcellForTm()
+        {
+            //Regions - Центр, Юг, Урал, Поволжье, Москва, Северо-Запад, Сибирь-Дальний Восток
+
+            int[] Test1340 = {1340};
+            int[] TmCenter = { 116, 892, 115, 551, 1525, 1235, 1874, 8018, 93, 747, 8073 }; //Центр
+            int[] TmNorthWest = { 968, 832, 2351, 8083, 64, 1835, 220, 1224, 8019, 1415, 8038, 8076 };//Северо-Запад
+            int[] TmUral = {/*589,*//*833,359,344,*/2882, 36, 8022, 647, 147, 2433 };//Урал
+            int[] TmPovolzhe = { /*419, 578, 772, 2534, 299,*/ 46, 623/*, 1226, 8016, 142, 8037*/};//Поволжье
+            int[] TmMoscow = { /*245, 874,335,8002, 2762,8025,8005,200,1855,*/8015, 8029, 8079 };//Москва
+            int[] TmSibirDalnVostok = { 1097, 2359, 83, 269, 253, 828, 1821, 8017, 1139, 8070, 8072 };//Сибирь-Дальний Восток
+            int[] TmSouth = { 937, 829, 271, 19, 1801, 122, 579, 1419, 951, 1470, 8077 };//Юг
+
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+
+            method.StoreLoginPasswordFromExcel();
+            method.StoreExcelDataAudit(@"D:\Sneghka\Selenium\Projects\Planirovschik\Audit_TM_30.03.2017.xlsx", "audit.areas");
+
+            foreach (var user in Test1340)
+            {
+
+                var password = method.GetPasswordByUser(user.ToString());
+
+                method.LoginStada(test, "user_" + user, "1");
+                if (!method.IsLoginSuccess(test, user.ToString(), password))
+                {
+                    Console.WriteLine("user_" + user + "  Incorrect login or password");
+                    firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+                if (!method.IsPreparationListExist())
+                {
+                    firefox.Navigate().GoToUrl(logoutTest);
+                    continue;
+                }
+
+                Console.WriteLine("User_" + user + ":");
+                Waiting.WaitForAjax(firefox);
+                method.CheckAuditDataWithExcelForTmByOblasti("Центр");
+                method.LogoutStada(logoutTest);
+            }
+
+            firefox.Quit();
+
+
         }
 
 
@@ -460,7 +526,7 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "1404", "2725", "8069", "8070" };
+            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070", "8072" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Замороженные_препараты_на_НОП.xls");
             /*method.StoreLoginPasswordFromExcel();*/
@@ -469,12 +535,12 @@ namespace Planirovanie
             {
 
                 /* method.LoginStada(stada, "user_" + user, method.GetPasswordByUser(user));*/
-                method.LoginStada(stada, "user_" + user, "1");
+                method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
-                method.IsGrUnchangeable();
+                 method.IsGrUnchangeable();
 
-                method.LogoutStada(logoutStada);
+                method.LogoutStada(logoutTest);
             }
 
             firefox.Quit();
@@ -485,29 +551,26 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            var pageElements = new PageElements(firefox);
-            WebDriverWait wait = new WebDriverWait(firefox, TimeSpan.FromSeconds(120));
-
-            string[] chainPM_BU84_32_43 = new string[] { "1901", "2195", "1590", "1763", "2128", "2494", "8003", "1172", "2708", "1638", "1174", "2393" };
-            string[] chainPM_BU88 = { "2200", "1965", "2718" };
-            string[] chainPM_BU76 = { "1788", "2113", "2222" };
-            string[] chainPM_BU105_112_115 = { "2711", "2149", "2205", "1514", "754", "8061", "1598" };
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070" };
+          
+            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070", "8072" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Unfrozen.xls");
 
             foreach (var user in chainPM_NOP)
             {
-                method.LoginStada(stada, "user_" + user, "1");
+                method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
                 Waiting.WaitForAjax(firefox);
                 method.IsGrChangeable();
-                method.LogoutStada(logoutStada);
+                method.LogoutStada(logoutTest);
             }
             firefox.Quit();
         }
 
 
+
+
+        // НЕПОНЯТНО НУЖНЫ ЛИ
         [Test]
         public void UserRelevance()
         {
@@ -515,7 +578,7 @@ namespace Planirovanie
             var methods = new Methods(firefox);
 
 
-            methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp");
+            //methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp");
             Console.WriteLine("Считали зоны ответственности Справочник");
             methods.StoreExcelDataEmailSpravochik("email");
             Console.WriteLine("Считали email Справочник");
@@ -541,9 +604,6 @@ namespace Planirovanie
 
             firefox.Quit();
         }
-
-
-
 
         [Test]
         public void CheckAudiJanData()

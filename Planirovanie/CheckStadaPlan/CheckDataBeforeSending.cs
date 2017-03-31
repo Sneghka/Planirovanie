@@ -58,7 +58,7 @@ namespace Planirovanie.CheckStadaPlan
 
             var months = 3;
             //Перед считыванием вручную разбить задвоеные БЮ (напр 31,94 - копипастом продублировать всё для 31,а потом тоже самое для 94)
-            methods.StoreExcelDataTerritoriiSpravochnik("zone_of_resp"); 
+            methods.StoreExcelDataTerritoriiSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx", "zone_of_resp"); 
 
             Console.WriteLine("Считали зоны ответственности");
             methods.StoreExcelDataEmailSpravochik("email"); 
@@ -79,6 +79,20 @@ namespace Planirovanie.CheckStadaPlan
             firefox2.Quit();
             Driver.Quit();
 
+        }
+
+        [Test]
+        public void CheckTerritorii()
+        {
+            var methods = new Methods(Driver as FirefoxDriver);
+            //Перед считыванием вручную разбить задвоеные БЮ (напр 31,94 - копипастом продублировать всё для 31,а потом тоже самое для 94)
+            var sprav = methods.StoreExcelDataTerritoriiSpravochnikOut(@"D:\Sneghka\Selenium\Projects\Planirovschik\Terr_2017.xlsx", "zone_of_resp");
+            Console.WriteLine("Считали зоны ответственности Справочник");
+            var plan = methods.StoreExcelDataTerritoriiSpravochnikOut(@"D:\Sneghka\Selenium\Projects\Planirovschik\Terr_2017.xlsx", "Worksheet");
+            Console.WriteLine("Считали зоны ответственности Планировщик");
+
+
+            Driver.Quit();
         }
 
 

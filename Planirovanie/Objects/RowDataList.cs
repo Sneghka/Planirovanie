@@ -221,5 +221,43 @@ namespace Planirovanie
                     select row.WebName).ToList();
 
         }
+
+        public int GetUpakovkiAuditTmCommerciaOwn(int prepId, int oblId )
+        {
+            return (from r in this
+                where r.IdPrUniq == prepId && r.DataType == 0 && r.SalesType == 1 && r.AreaId == oblId
+                select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiAuditTmCommerciaOwnLgota(int prepId, int oblId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == prepId && r.DataType == 0 && (r.SalesType == 2 || r.SalesType == 3) && r.AreaId == oblId
+                    select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiAuditTmCommerciaOwn67_115(int prepId, int oblId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == prepId && r.DataType == 0 && r.AreaId == oblId
+                    select r.Upakovki).Sum();
+        }
+
+        public int GetUpakovkiAuditTmCommerciaConcurent(int prepId, int oblId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == prepId && r.DataType == 1 && r.SalesType == 1 && r.AreaId == oblId
+                    select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiAuditTmCommerciaConcurentLgota(int prepId, int oblId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == prepId && r.DataType == 1 && (r.SalesType == 2 || r.SalesType == 3) && r.AreaId == oblId
+                    select r.Upakovki).Sum();
+        }
+        public int GetUpakovkiAuditTmCommerciaConcurent67_115(int prepId, int oblId)
+        {
+            return (from r in this
+                    where r.IdPrUniq == prepId && r.DataType == 1 && r.AreaId == oblId
+                    select r.Upakovki).Sum();
+        }
     }
 }
