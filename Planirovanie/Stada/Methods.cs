@@ -147,7 +147,7 @@ namespace Planirovanie
                 {
 
                     Name = Regex.Replace(name, @"\s+", " "),
-                    Id_BU = Convert.ToInt32(row["id_BU"]),
+                    //Id_BU = Convert.ToInt32(row["id_BU"]),
                     IdPrUniq = Convert.ToInt32(row["Id_PrUniq"]),
                     /*Segment = Convert.ToInt32(row["Сегмент"])*/
                 };

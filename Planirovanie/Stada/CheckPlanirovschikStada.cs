@@ -526,7 +526,7 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070", "8072" };
+            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Замороженные_препараты_на_НОП.xls");
             /*method.StoreLoginPasswordFromExcel();*/
@@ -552,7 +552,7 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
           
-            string[] chainPM_NOP = { "625", "1048", "718", "12", "2755", "1404", "20", "2725", "8069", "8070", "8072" };
+            string[] chainPM_NOP = { /*"625", "1048", "718", "12", "2755", "1404", "20", "2725",*/ "8069", "8070" };
 
             method.StoreExcelDataAny(@"D:\Sneghka\Selenium\Projects\Planirovschik\Unfrozen.xls");
 
