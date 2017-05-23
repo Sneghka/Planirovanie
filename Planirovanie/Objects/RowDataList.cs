@@ -109,11 +109,37 @@ namespace Planirovanie
 
         public List<int> GetIdListByUserWithoutAutoplan(int user)
         {
-
-           
             return   (from r in this
                     where r.IdSotr == user && r.Group != "2 группа (автопланирование)"
                       select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
+        }
+
+        public List<int> GetIdListByUserWithoutAutoplan(int user, int[] months)
+        {
+            return (from r in this
+                    where r.IdSotr == user && r.Group != "2 группа (автопланирование)" && months.Contains(r.Month)
+                    select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
+        }
+
+        public List<int> GetIdListByUserWithAutoplan(int user, int[] months)
+        {
+            return (from r in this
+                    where r.IdSotr == user && months.Contains(r.Month)
+                    select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
+        }
+
+        public List<int> GetIdListBySegmentWithoutAutoplan(int segment)
+        {
+            return (from r in this
+                    where r.Segment == segment && r.Group != "2 группа (автопланирование)"
+                    select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
+        }
+
+        public List<int> GetIdListBySegmentWithAutoplan(int segment, int[] months)
+        {
+            return (from r in this
+                    where r.Segment == segment && months.Contains(r.Month)
+                    select r.IdPrUniq = r.Segment == 2 ? -r.IdPrUniq : r.IdPrUniq).Distinct().ToList();
         }
 
         public List<int> GetIdList()

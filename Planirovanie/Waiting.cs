@@ -14,11 +14,11 @@ namespace Planirovanie
     public static class Waiting
     {
 
-        public static void WaitForAjax(FirefoxDriver _firefox)
+        public static void WaitForAjax(FirefoxDriver firefox)
         {
             while (true) // Handle timeout somewhere
             {
-                var ajaxIsComplete = (bool)(_firefox as IJavaScriptExecutor).ExecuteScript("return jQuery.active == 0");
+                var ajaxIsComplete = (bool)(firefox as IJavaScriptExecutor).ExecuteScript("return jQuery.active == 0");
                 if (ajaxIsComplete)
                 {
                     Thread.Sleep(500);

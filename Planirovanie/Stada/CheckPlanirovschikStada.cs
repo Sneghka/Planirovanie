@@ -49,11 +49,11 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            int[] months = { 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\files_may\1_для_модуля__Справочник1_16.05.17__custom_.xlsx");
             Console.WriteLine("Excel was stored");
-            method.LoginStada(stada, "user_1340", "1");
+            method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
             Console.WriteLine("Planirovschik was stored");
             method.ComparePreparationNameThroughObjects(months);
@@ -66,9 +66,9 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            int[] months = { 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\files_may\1_для_модуля__Справочник1_16.05.17__custom_.xlsx");
             Console.WriteLine("Excel was stored");
             method.LoginStada(test, "user_1340", "1");
             method.StorePreparationNamesFromPlanirovschik();
@@ -80,18 +80,34 @@ namespace Planirovanie
         }
 
         [Test]
-        public void CheckPreparationsData()
+        public void CheckGPOnlyTotal()
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
-            int[] months = { 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            int[] months = { 7, 8, 9, 10, 11, 12 };
 
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\files_may\1_для_модуля__Справочник1_16.05.17__custom_.xlsx");
             Debug.WriteLine("Excel was stored");
-            method.LoginStada(stada, "user_1340", "1");
+            method.LoginStada(test, "user_1340", "1");
             method.CheckPreparationData(months);
             firefox.Quit();
         }
+
+
+        [Test]
+        public void CheckGPAll()
+        {
+            var firefox = new FirefoxDriver();
+            var method = new Methods(firefox);
+            int[] months = { 7, 8, 9, 10, 11, 12 };
+
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\files_may\1_для_модуля__Справочник1_16.05.17__custom_.xlsx");
+            Debug.WriteLine("Excel was stored");
+            method.LoginStada(test, "user_1340", "1");
+            method.CheckAllData(months);
+            firefox.Quit();
+        }
+
 
         [Test]
         public void CheckPreparationsDataByQrt()
@@ -134,13 +150,14 @@ namespace Planirovanie
         {
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
+            int[] months = { 7, 8, 9, 10, 11, 12 };
 
 
-             int[] chainPM = { 8003, 754, 8084, 1598, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 8067, 2212,  2708, 2711, 2718, 2849, 2859, 2861, 2863, 2864, 2866, 8085, 2892 };
+            int[] chainPM = { 2200, 1965, 2718, 2863, 2864, 1901, 2195, 2128, 2912, 8003, 2859, 2708, 2920, 2113, 2711, 8067, 2205, 2892, 1598, 2212, 754, 2849, 2861, 2866, 8012, 8013 };
+            //2200, 1965, 2718, 2863, 2864, 1901, 2195, 2128, 2912, 8003, 2859, 2708, 2920, 2113, 2711, 8067, 2205, 2892, 1598, 2212, 754, 2849, 2861, 2866, 8012, 8013
 
-            /*int[] chainPM = { 8003, 754, 8061, 1174, 1598, 1638, 1901, 1965, 8012, 8013, 2113, 2128, 2195, 2200, 2205, 2212, 2494, 2708, 2711, 2718, 2849, 2859, 2861, 2864,  8067 };*/
-
-            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_NEW.xlsx");
+           
+            method.StoreExcelData(@"D:\Sneghka\Selenium\Projects\Planirovschik\files_may\1_для_модуля__Справочник1_16.05.17__custom_.xlsx");
             foreach (var user in chainPM)
             {
                 Console.WriteLine("User_" + user + ":");
@@ -157,10 +174,8 @@ namespace Planirovanie
                     Console.WriteLine("Нет списка препаратов!");
                     continue;
                 }
-
-                
                 Waiting.WaitForAjax(firefox);
-                method.CheckPreparationListForPM(user);
+                method.CheckPreparationListForPM(user, months);
                 method.LogoutStada(logoutTest);
             }
             firefox.Quit();
@@ -214,10 +229,26 @@ namespace Planirovanie
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
 
-           
-            method.StoreExcelDataDistributionQrt(@"D:\Sneghka\Selenium\Projects\Planirovschik\Копия рабочая файл истин факт дистр 2016 по sku_br 21032017.xlsx", "Select * from [2016qrt$]");
-            method.LoginStada(test, "user_1340", "1");
-            method.CheckDistributionQrtDataWithExcel();
+
+            int[] chainPM = { /*2200, 1965, 2718, 2863, 2864, 1901, 2195, 8084, 8003, 2859, 2708, 8085, 2113, 2711, 8067, 2205, 2892, 1598, 2212, 754, 2849, 2861, 2866,*/ 8012, 8013 };
+
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distr_NOP_03.04.2017.xlsx", "Лист1");
+            // method.StoreExcelDataDistributionQrt(@"D:\Sneghka\Selenium\Projects\Planirovschik\Копия рабочая файл истин факт дистр 2016 по sku_br 21032017.xlsx", "Select * from [2016qrt$]");
+
+            foreach (var nop in chainPM)
+            {
+                var user = "user_" + nop;
+                //var password = method.GetPasswordByUser(nop.ToString());
+                Console.WriteLine(user);
+                /* Console.WriteLine(user + ":");*/
+                method.LoginStada(test, user, "1");
+                method.CheckDistributionQrtDataWithExcelForPm(nop);
+                method.LogoutStada(logoutTest);
+            }
+            
+
+           // method.LoginStada(test, "user_1340", "1");
+            //method.CheckDistributionQrtDataWithExcel();
 
             firefox.Quit();
         }
@@ -237,15 +268,17 @@ namespace Planirovanie
         [Test]
         public void CheckDistributionWithExcelForNop()
         {
-            int[] chainNOP = {/*625, 1048, 718, 12, 2755, 20, 2725,1404,*/ 8069, 8070};
+            int[] chainNOP = {625, 1048, 718, 12, 2755, 20, 2725,1404, 8069, 8070};
+            int[] chainPM = {2200, 1965, 2718, 2863, 2864, 1901, 2195, 8084, 8003, 2859, 2708, 8085, 2113, 2711, 8067, 2205, 2892, 1598, 2212, 754, 2849, 2861, 2866, 8012, 8013 };
              
             var firefox = new FirefoxDriver();
             var method = new Methods(firefox);
             
             method.StoreLoginPasswordFromExcel();// @"D:\Sneghka\Selenium\Projects\Planirovschik\Check_Login_Pass.xlsx"
-            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distribution_NOP_TM_2016_2.xlsx", "Лист1");
-           // method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
-            foreach (var nop in chainNOP)
+            //method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distribution_NOP_TM_2016_2.xlsx", "Лист1");
+            // method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Справочник3_14.16.16.xlsx", "Факт янв-окт 2016");
+            method.StoreExcelDataDistributionFromSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\Distr_NOP_03.04.2017.xlsx", "Лист1");
+            foreach (var nop in chainPM)
             {
                 var user = "user_" + nop;
                  var password = method.GetPasswordByUser(nop.ToString());
@@ -428,19 +461,19 @@ namespace Planirovanie
 
             string[] chain1340 = new string[] { "1340" };
             string[] chain88 = new string[] { "2200", "1965", "2718", "2863", "625", "116", "968", "589", "419", "245", "1097","937",  "9034", "9010" };
-            string[] chain31_94 = new string[] { /*"2864","1901", "2195", "2128", "8084", "1048", "578", "832", "2351","874", "833", "2359", "271", "892", "8002", "9036","9056", "9014",*/ "9054" };// УТВЕРДИЛА
+            string[] chain84 = new string[] { /*"2864","1901", "2195", "2128", "2912" , "1048", "578", "832", "2351", "874", "833", "2359",*/ "271", "892", "8002", "9036", "9056", "9014", "9054" };
             string[] chain32 = new string[] { "8003", "718", "122", "772", "335", "8083", "83", "359", "115", "9012", "9037" };
-            string[] chain42_106 = new string[] { /*"2859", "2708",*/ "8085", "12", "551", "2762", "269","64", "19", "2534", "344", "9002", "9027" };//++
-            string[] chain76 = new string[] { "2113", "2755", "253", "1801", "2882", "8025", "1835", "1525", "299", "9016", "9041"};//++
-            string[] chain105 = new string[] { "2711", "8067", "2205", "2892", "20", "829", "220", "1235", "8005", "46", "623", "828", "36", "9030", "9020" };//++
-            string[] chain115 = new string[] { "1598", "2212", "2725", "8022", "200", "1224", "1226", "1821", "1874", "951", "9006", "9040" };//++
-            string[] chain116_102 = new string[] { "754", "2849","2861","2866", "1404", "8018", "647", "8017", "8019", "579", "8016", "1855", "9045", "9046" }; //++
-            string[] chain33 = new string[] { "8012", "8069", "93", "147", "1139", "1415", "1419", "142", "8015", "9048", "9023" };// 
-            string[] chain67 = new string[] { "8013", "8070", "747", "2433", "8040", "8038", "1470", "8037", "8029", "9050", "9025" }; // ГОТОВО
+            string[] chain43 = new string[] { "2859", "2708","2920", "12", "551", "2762", "269","64", "19", "2534", "344", "9002", "9027" };
+            string[] chain76 = new string[] { "2113", "2755", "253", "2925", "2882", "8025", "1835", "1525", "299", "9016", "9041"};
+            string[] chain117 = new string[] { "2711", "8067", "2205", "2892", "20", "829", "220", "1235", "8005", "46", "623", "828", "36", "9030", "9020" };
+            string[] chain115 = new string[] { "1598", "2212", "2725", "8022", "200", "1224", "1226", "1821", "1874", "951", "9006", "9040" };
+            string[] chain119 = new string[] {/* "754", "2849","2861","2866", "1404", "8018", "647", "8017", "8019", "579", "1470", "1855", "9045",*/ "9046" }; 
+            string[] chain33 = new string[] { /*"8012",*/ /*"8069", "93",*/ "147", "1139", "1415", "1419", "142", "8015", "9048", "9023" };
+            string[] chain67 = new string[] { "8013", "8070", "747", "2433", "8040", "8038", "8086", "8037", "8029", "9050", "9025" }; 
 
             string[] chain1111 = new string[] { "8071", "8072", "8073", "8074", "8075", "8076", "8077", "8078", "8079", "9051", "9052" };
 
-            foreach (var user in chain31_94)
+            foreach (var user in chain33)
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
@@ -465,8 +498,9 @@ namespace Planirovanie
             string[] chain42_106 = new string[] { "9027", "9002", "344", "2534", "19", "64", "269", "2762", "551" };//автотест
             string[] chain76 = new string[] { /*"9041", "9016",*/ "299", "1525", "1835", "8025", "8039", "1801", "253"};
             string[] chain105 = new string[] { "9020", "9030", "36", "828", "623", "46", "8005", "1235", "220", "829"};
-            string[] chain115 = new string[] { "9040", "9006", "951", "1874", "1821", "1226", "1224", "200", "8022"};
-            string[] chain116 = new string[] { "9046", "9045", "1855", "8016", "579", "8019", "8017", "647", "8018"};
+            string[] chain119 = new string[] {/* "9046", "9045", "1855", "1470",*/ "579", "8019", "8017", "647", "8018"};
+
+            string[] chain115 = new string[] { "9040", "9006", "951", "1874", "1821", "1226", "1224", "200", "8022" };
             string[] chain33 = new string[] { /*"9023",*/ "9048", "8015", "142", "1419", "1415", "1139", "147", "93" };//
             string[] chain67 = new string[] { "9025", "9050", "8029", "8037", "1470", "8038", "8040", "2433", "747" };//ГОТОВО
 
@@ -474,7 +508,7 @@ namespace Planirovanie
             
            
 
-            foreach (var user in chain105)
+            foreach (var user in chain119)
             {
                 method.LoginStada(test, "user_" + user, "1");
                 Console.WriteLine("User_" + user + ":");
