@@ -124,6 +124,14 @@ namespace Planirovanie
             return false;
         }
 
+        public bool IsUserExistInSpravochink(string login)
+        {
+            var plan = login;
+            var substring = Convert.ToInt32(login.Substring(5));
+            return this.Any(row => row.IdSotr == substring);
+        }
+
+
         public bool IsBuUserSpravochikMatchPlanirovschik(int buUserIdPlanirovschik, int userId)
         {
 

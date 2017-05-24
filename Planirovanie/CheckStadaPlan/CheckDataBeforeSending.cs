@@ -61,7 +61,7 @@ namespace Planirovanie.CheckStadaPlan
             methods.StoreExcelDataTerritoriiSpravochnik(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx", "zone_of_resp"); 
 
             Console.WriteLine("Считали зоны ответственности");
-            methods.StoreExcelDataEmailSpravochik("email"); 
+            methods.StoreExcelDataEmailSpravochik(@"D:\Sneghka\Selenium\Projects\Planirovschik\1_для_модуля__Справочник1_05.03.17___custom_.xlsx", "email"); 
             Console.WriteLine("Считали email");
             //Methods.StoreLoginPasswordFromExcel();
             methods.LoginStada(test, "user_1340", "m600e");
